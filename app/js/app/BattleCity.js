@@ -50,7 +50,7 @@ window.onload = function() {
             screenHeight: GameLoop.renderer.height,
             getTime: GameLoop.getTime,
             getTimeDelta: GameLoop.getTimeDelta
-        }
+        };
     });
 
     Game = {
@@ -115,7 +115,7 @@ window.onload = function() {
                 if (Game.instance.input.keys.z) {
                     this.shot();
                 }
-            }
+            };
 
             /* Player 2 input handling */
             Game.players[1].instance.handleInput = function() {
@@ -138,7 +138,7 @@ window.onload = function() {
                 if (Game.instance.input.keys.num9) {
                     this.shot();
                 }
-            }
+            };
         }
     );
     Loader.load();

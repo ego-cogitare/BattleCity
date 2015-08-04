@@ -3,7 +3,7 @@ var Shell = function() {
     var _sprite = new PIXI.Sprite(
             new PIXI.Texture(
                 Loader.resources.Atlas.texture,
-                { x: 322, y: 102, width: 4, height: 8 }
+                { x: 1288, y: 408, width: 16, height: 32 }
             )
         );
     
@@ -12,7 +12,7 @@ var Shell = function() {
         _speedX: 0,
         _speedY: 0,
         _dirrection: null,
-        pivot: new PIXI.Point(2, 4),
+        pivot: new PIXI.Point(8, 16),
         state: ShellStates.ready,
         visible: false,
         
@@ -75,8 +75,8 @@ var Shell = function() {
         }
     });
     
-    _sprite.scale.x = 2;
-    _sprite.scale.y = 2;
+    _sprite.scale.x = 1;
+    _sprite.scale.y = 1;
 
     return _sprite;
 };

@@ -8,7 +8,7 @@ window.onload = function() {
 
         var GameLoop = {
             initialize: function() {
-                this.renderer = new PIXI.CanvasRenderer(800, 600);
+                this.renderer = new PIXI.autoDetectRenderer(Game.config.canvasSize.width, Game.config.canvasSize.height);
                 document.body.appendChild(this.renderer.view);
                 this.stage = new PIXI.Container();
                 requestAnimationFrame(GameLoop.animate);
@@ -53,28 +53,8 @@ window.onload = function() {
         };
     });
 
-    Game = {
-        instance: null,
-        players: [
-            {
-                instance: null,
-                scale: 2,
-                speed: 3.0,
-                initX: 300,
-                initY: 550
-            },
-            {
-                instance: null,
-                scale: 2,
-                speed: 3.0,
-                initX: 700,
-                initY: 550
-            }
-        ]
-    };
-
     Loader = new PIXI.loaders.Loader();
-    Loader.add('Atlas', 'app/asset/textures/atlas.png');
+    Loader.add('Atlas', 'app/asset/textures/atlas4x.png');
     Loader.once('complete', 
         function() {
             /* Game instance create */

@@ -1,27 +1,24 @@
 var Tank = function(ID) {
 
-    var sprite = new PIXI.Sprite();
-    var Frames = new TextureExploder(Loader.resources.Atlas.texture).explode(16, 16);
+    var _tailWidth = Game.config.tailSize.width;
+    var _tailHeight = Game.config.tailSize.height;
     
-    /* Get animation depends of player ID */
+    var _sprite = new PIXI.Sprite();
+    var _frames = new TextureExploder(
+            new PIXI.Texture(
+                Loader.resources.Atlas.texture,
+                { x: 0, y: _tailHeight * 3, width: _tailWidth * 2, height: _tailHeight }
+            )
+        ).explode(_tailWidth, _tailHeight);
     
-    var _mapOffsetX = 0;
-    var _mapOffsetY = 0;
-    
-    switch (ID) {
-        case 1: 
-            _mapOffsetY = 8;
-        break;
-    }
-    
-    var Animations = {
+    var _animations = {
         stop: new Animation([ 
-            Frames[3 + _mapOffsetY][6]
+            _frames[0][0]
         ], 999),
         
         move: new Animation([ 
-            Frames[3 + _mapOffsetY][6], 
-            Frames[3 +_mapOffsetY][7] 
+            _frames[0][0], 
+            _frames[0][1] 
         ], 75)
     };
 
@@ -33,11 +30,11 @@ var Tank = function(ID) {
         speedY: 0,
         dirrection: Dirrections.top,
         curentState: States.stop,
-        holderSize: 1,
+        holderSize: 2,
         holder: [new Shell(),new Shell()],
         cooldownTime: 100,
         lastShootTime: 0,
-        pivot: new PIXI.Point(7, 7),
+        pivot: new PIXI.Point(_tailWidth / 2, _tailHeight / 2),
 
         render: function() {
             this.setSpeedX(0);
@@ -53,23 +50,23 @@ var Tank = function(ID) {
                 this.setState(States.stop);
             }
             
-            this.texture = Animations[this.curentState].getFrame(Game.instance.getTimeDelta());
+            this.texture = _animations[this.curentState].getFrame(Game.instance.getTimeDelta());
             
             switch (this.dirrection) {
                 case Dirrections.top:
-                    this.rotation = -1.57;
-                break;
-                
-                case Dirrections.right: 
                     this.rotation = 0;
                 break;
                 
-                case Dirrections.bottom: 
+                case Dirrections.right: 
                     this.rotation = 1.57;
                 break;
                 
-                case Dirrections.left: 
+                case Dirrections.bottom: 
                     this.rotation = 3.14;
+                break;
+                
+                case Dirrections.left: 
+                    this.rotation = -1.57;
                 break;
             }
             
@@ -82,6 +79,7 @@ var Tank = function(ID) {
                 this.moveXBy(this.speedX);
                 this.moveYBy(this.speedY);
             }
+
         },
         shot: function() {
             for (var i = 0; i < this.holder.length; i++) {
@@ -154,11 +152,11 @@ var Tank = function(ID) {
             this.position.y = y;
         }
     };
-    _.extend(sprite, Methods);
+    _.extend(_sprite, Methods);
 
     for (var i = 0; i < Methods.holder.length; i++) {
         Game.instance.addModel(Methods.holder[i]);
     }
     
-    return sprite;
+    return _sprite;
 };

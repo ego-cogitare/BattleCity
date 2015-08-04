@@ -1,23 +1,22 @@
 var TextureExploder = function(texture) {
 
     var r = [];
-    var t = new PIXI.Texture(texture);
 
     return {
         getTexture: function() {
-            return t;
+            return texture;
         },
         explode: function(cellWidth, cellHeight) {
 
-            var cellsX = t.width / cellWidth;
-            var cellsY = t.height / cellHeight;
+            var cellsX = texture.width / cellWidth;
+            var cellsY = texture.height / cellHeight;
 
             for (var i = 0; i < cellsY; i++) {
                 r[i] = [];
                 for (var j = 0; j < cellsX; j++) {
                     r[i][j] = new PIXI.Texture(
-                                t,
-                                { x: j * cellWidth, y: i * cellHeight, width: cellWidth, height: cellHeight }
+                                texture,
+                                { x: j * cellWidth + texture.crop.x, y: i * cellHeight + texture.crop.y, width: cellWidth, height: cellHeight }
                             );
                 }
             }

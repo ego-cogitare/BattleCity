@@ -13,11 +13,11 @@ var Shell = function() {
         _speedY: 0,
         _dirrection: null,
         pivot: new PIXI.Point(8, 16),
-        state: ShellStates.ready,
+        state: Game.types.shellStates.ready,
         visible: false,
         
         setDirrection: function(dirrection) {
-            if (typeof Dirrections[dirrection] !== 'undefined') {
+            if (typeof Game.types.tankDirrections[dirrection] !== 'undefined') {
                 this._dirrection = dirrection;
             }
         },
@@ -31,39 +31,39 @@ var Shell = function() {
         reset: function() {
             this.visible = false;
             this._speedX = this._speedY = 0;
-            this.state = ShellStates.ready;
+            this.state = Game.types.shellStates.ready;
         },
         getState: function() {
             return this.state;
         },
         shot: function() {
             switch (this._dirrection) {
-                case Dirrections.top:
+                case Game.types.tankDirrections.top:
                     this._speedX = 0;
                     this._speedY = -this._speed;
                     this.rotation = 0;
                 break;
                 
-                case Dirrections.right: 
+                case Game.types.tankDirrections.right: 
                     this._speedX = this._speed;
                     this._speedY = 0;
                     this.rotation = 1.57;
                 break;
                 
-                case Dirrections.bottom: 
+                case Game.types.tankDirrections.bottom: 
                     this._speedX = 0;
                     this._speedY = this._speed;
                     this.rotation = 3.14;
                 break;
                 
-                case Dirrections.left: 
+                case Game.types.tankDirrections.left: 
                     this._speedX = -this._speed;
                     this._speedY = 0;
                     this.rotation = -1.57;
                 break;
             }
             this.visible = true;
-            this.state = ShellStates.flying;
+            this.state = Game.types.shellStates.flying;
         },
         render: function() {
             this.position.x += this._speedX;

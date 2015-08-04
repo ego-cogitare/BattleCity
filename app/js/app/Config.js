@@ -1,11 +1,21 @@
-var Dirrections = { top: 'top', right: 'right', bottom: 'bottom', left: 'left' };
-
-var States = { stop: 'stop', move: 'move' };
-var ShellStates = { flying: 'flying', ready: 'ready' };
-
-
 Game = {
     instance: null,
+    types: {
+        tankDirrections: { 
+            top: 'top', 
+            right: 'right', 
+            bottom: 'bottom', 
+            left: 'left' 
+        },
+        tankStates: { 
+            stop: 'stop', 
+            move: 'move'
+        },
+        shellStates: {
+            ready: 'ready',
+            flying: 'flying'
+        }
+    },
     players: [
         {
             instance: null,

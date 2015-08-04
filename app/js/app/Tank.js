@@ -28,8 +28,8 @@ var Tank = function(ID) {
         speed: 2,
         speedX: 0,
         speedY: 0,
-        dirrection: Dirrections.top,
-        curentState: States.stop,
+        dirrection: Game.types.tankDirrections.top,
+        curentState: Game.types.tankStates.stop,
         holderSize: 2,
         holder: [new Shell(),new Shell()],
         cooldownTime: 100,
@@ -45,27 +45,27 @@ var Tank = function(ID) {
             
             /* If speed not zero - model is in a move state */
             if (this.getSpeedX() !== 0 || this.getSpeedY() !== 0) {
-                this.setState(States.move);
+                this.setState(Game.types.tankStates.move);
             } else {
-                this.setState(States.stop);
+                this.setState(Game.types.tankStates.stop);
             }
             
             this.texture = _animations[this.curentState].getFrame(Game.instance.getTimeDelta());
             
             switch (this.dirrection) {
-                case Dirrections.top:
+                case Game.types.tankDirrections.top:
                     this.rotation = 0;
                 break;
                 
-                case Dirrections.right: 
+                case Game.types.tankDirrections.right: 
                     this.rotation = 1.57;
                 break;
                 
-                case Dirrections.bottom: 
+                case Game.types.tankDirrections.bottom: 
                     this.rotation = 3.14;
                 break;
                 
-                case Dirrections.left: 
+                case Game.types.tankDirrections.left: 
                     this.rotation = -1.57;
                 break;
             }
@@ -83,7 +83,7 @@ var Tank = function(ID) {
         },
         shot: function() {
             for (var i = 0; i < this.holder.length; i++) {
-                if (this.holder[i].getState() === ShellStates.ready && Game.instance.getTime() - this.lastShootTime >= this.cooldownTime) {
+                if (this.holder[i].getState() === Game.types.shellStates.ready && Game.instance.getTime() - this.lastShootTime >= this.cooldownTime) {
                     this.holder[i].setDirrection(this.dirrection);
                     this.holder[i].setPosition(this.position.x, this.position.y);
                     this.holder[i].shot();
@@ -104,7 +104,7 @@ var Tank = function(ID) {
             return this.curentState;
         },
         setState: function(state) {
-            if (typeof States[state] !== 'undefined') {
+            if (typeof Game.types.tankStates[state] !== 'undefined') {
                 this.curentState = state;
             }
         },

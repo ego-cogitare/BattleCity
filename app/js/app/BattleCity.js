@@ -77,19 +77,19 @@ window.onload = function() {
             /* Player 1 input handling */
             Game.players[0].instance.handleInput = function() {
                 if (Game.instance.input.keys.left) {
-                    this.setDirrection(Dirrections.left);
+                    this.setDirrection(Game.types.tankDirrections.left);
                     this.setSpeedX(-this.getSpeed());
                 }
                 else if (Game.instance.input.keys.right) {
-                    this.setDirrection(Dirrections.right);
+                    this.setDirrection(Game.types.tankDirrections.right);
                     this.setSpeedX(this.getSpeed());
                 }
                 else if (Game.instance.input.keys.up) {
-                    this.setDirrection(Dirrections.top);
+                    this.setDirrection(Game.types.tankDirrections.top);
                     this.setSpeedY(-this.getSpeed());
                 }
                 else if (Game.instance.input.keys.down) {
-                    this.setDirrection(Dirrections.bottom);
+                    this.setDirrection(Game.types.tankDirrections.bottom);
                     this.setSpeedY(this.getSpeed());
                 }
                 if (Game.instance.input.keys.z) {
@@ -100,19 +100,19 @@ window.onload = function() {
             /* Player 2 input handling */
             Game.players[1].instance.handleInput = function() {
                 if (Game.instance.input.keys.num4) {
-                    this.setDirrection(Dirrections.left);
+                    this.setDirrection(Game.types.tankDirrections.left);
                     this.setSpeedX(-this.getSpeed());
                 }
                 else if (Game.instance.input.keys.num6) {
-                    this.setDirrection(Dirrections.right);
+                    this.setDirrection(Game.types.tankDirrections.right);
                     this.setSpeedX(this.getSpeed());
                 }
                 else if (Game.instance.input.keys.num8) {
-                    this.setDirrection(Dirrections.top);
+                    this.setDirrection(Game.types.tankDirrections.top);
                     this.setSpeedY(-this.getSpeed());
                 }
                 else if (Game.instance.input.keys.num5) {
-                    this.setDirrection(Dirrections.bottom);
+                    this.setDirrection(Game.types.tankDirrections.bottom);
                     this.setSpeedY(this.getSpeed());
                 }
                 if (Game.instance.input.keys.num9) {

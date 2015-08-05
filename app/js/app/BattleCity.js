@@ -37,6 +37,9 @@ window.onload = function() {
             },
             getTimeDelta: function() {
                 return _timeDelta;
+            },
+            getMap: function(mapId) {
+                return Loader.resources['Level' + mapId].data;
             }
         };
 
@@ -44,17 +47,17 @@ window.onload = function() {
 
         return  {
             addModel: GameLoop.addModel,
-            removeModel: GameLoop.removeModel,
-            input: _keyboard,
-            screenWidth: GameLoop.renderer.width,
-            screenHeight: GameLoop.renderer.height,
+            getMap: GameLoop.getMap,
             getTime: GameLoop.getTime,
-            getTimeDelta: GameLoop.getTimeDelta
+            getTimeDelta: GameLoop.getTimeDelta,
+            input: _keyboard,
+            removeModel: GameLoop.removeModel
         };
     });
 
     Loader = new PIXI.loaders.Loader();
     Loader.add('Atlas', 'app/asset/textures/atlas4x.png');
+    Loader.add('Level01', 'app/asset/maps/level01.json');
     Loader.once('complete', 
         function() {
             /* Game instance create */

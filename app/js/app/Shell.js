@@ -69,7 +69,7 @@ var Shell = function() {
             this.position.x += this._speedX;
             this.position.y += this._speedY;
             
-            if (this.position.x > Game.instance.screenWidth || this.position.x < 0 || this.position.y > Game.instance.screenHeight || this.position.y < 0) {
+            if (this.position.x > Game.config.canvasSize.width || this.position.x < 0 || this.position.y > Game.config.canvasSize.height || this.position.y < 0) {
                 this.reset();
             }
         }

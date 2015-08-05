@@ -1,0 +1,11 @@
+0 - Black background
+1 - Brick full
+2 - Brick left:black, right:full
+3 - Brick top:black, bottom:full
+4 - Brick left:full, right:black
+5 - Brick top:full, bottom:black
+
+6 - Сoncrete
+7 - Water
+8 - Tree
+9 - Swamp

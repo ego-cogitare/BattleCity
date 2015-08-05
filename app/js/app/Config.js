@@ -34,8 +34,8 @@ Game = {
     ],
     config: {
         canvasSize: {
-            width: 960,
-            height: 600
+            width: 800,
+            height: 800
         },
         tailSize: {
             width: 64,

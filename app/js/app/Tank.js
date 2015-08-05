@@ -70,8 +70,8 @@ var Tank = function(ID) {
                 break;
             }
             
-            if (this.position.x + this.speedX > Game.instance.screenWidth || this.position.x + this.speedX < 0 || 
-                this.position.y + this.speedY > Game.instance.screenHeight || this.position.y + this.speedY < 0) 
+            if (this.position.x + this.speedX > Game.config.canvasSize.width || this.position.x + this.speedX < 0 || 
+                this.position.y + this.speedY > Game.config.canvasSize.height || this.position.y + this.speedY < 0) 
             {
                 this.speedX = 0;
                 this.speedY = 0;

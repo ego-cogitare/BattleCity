@@ -61,6 +61,9 @@ var PowerUp = function(type) {
             this.position.x = x;
             this.position.y = y;
         },
+        die: function() {
+            Game.instance.removeModel(this);
+        },
         render: function() {
             _sprite.texture = _animations[type].getFrame(Game.instance.getTimeDelta());
         }

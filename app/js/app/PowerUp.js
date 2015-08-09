@@ -57,6 +57,8 @@ var PowerUp = function(type) {
     };
     
     _.extend(_sprite, {
+        zIndex: 2,
+        
         setPosition: function(x, y) {
             this.position.x = x;
             this.position.y = y;

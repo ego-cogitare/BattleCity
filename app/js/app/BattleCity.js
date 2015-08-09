@@ -28,6 +28,14 @@ window.onload = function() {
             },
             addModel: function(model) {
                 GameLoop.stage.addChild(model);
+                
+                GameLoop.stage.children.sort(function (a,b) {
+                    if (a.zIndex < b.zIndex)
+                        return -1;
+                    if (a.zIndex > b.zIndex)
+                        return 1;
+                    return 0;
+                });
             },
             removeModel: function(model) {
                 GameLoop.stage.removeChild(model);
@@ -56,8 +64,12 @@ window.onload = function() {
     });
 
     Loader = new PIXI.loaders.Loader();
-    Loader.add('Atlas', 'app/asset/textures/atlas4x.png');
-    Loader.add('Level01', 'app/asset/maps/level01.json');
+    
+    // Load game resources
+    _.each(Game.config.assets, function(v, f) {
+        Loader.add(f, v);
+    });
+    
     Loader.once('complete', 
         function() {
             /* Game instance create */
@@ -122,6 +134,12 @@ window.onload = function() {
                     this.shot();
                 }
             };
+            
+            var powerUp = new PowerUp('gun');
+            powerUp.setPosition(100,100);
+            Game.instance.addModel(powerUp);
+            
+            var levelMap = new Map('01');
         }
     );
     Loader.load();

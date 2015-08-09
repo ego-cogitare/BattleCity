@@ -33,6 +33,10 @@ Game = {
         }
     ],
     config: {
+        assets: {
+            Atlas: 'app/asset/textures/atlas4x.png',
+            Level01: 'app/asset/maps/level01.json'
+        },
         canvasSize: {
             width: 800,
             height: 800

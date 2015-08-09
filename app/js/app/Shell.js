@@ -12,6 +12,7 @@ var Shell = function() {
         _speedX: 0,
         _speedY: 0,
         _dirrection: null,
+        zIndex: 3,
         pivot: new PIXI.Point(8, 16),
         state: Game.types.shellStates.ready,
         visible: false,

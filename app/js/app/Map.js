@@ -15,18 +15,21 @@ var Map = function(map) {
     _.extend(_map, {
         getTail: function(id) {
             var tailMap = [
-                { x: 3, y: 1 },
-                { x: 0, y: 0 },
-                { x: 1, y: 0 },
-                { x: 2, y: 0 },
-                { x: 3, y: 0 },
-                { x: 4, y: 0 },
-                { x: 0, y: 1 },
-                { x: 0, y: 2 },
-                { x: 1, y: 1 },
-                { x: 2, y: 1 }
+                { x: 3, y: 1, zIndex: 0 }, // Background
+                { x: 0, y: 0, zIndex: 0 }, // Brick
+                { x: 1, y: 0, zIndex: 0 }, // Brick
+                { x: 2, y: 0, zIndex: 0 }, // Brick
+                { x: 3, y: 0, zIndex: 0 }, // Brick
+                { x: 4, y: 0, zIndex: 0 }, // Brick
+                { x: 0, y: 1, zIndex: 0 }, // Сoncrete
+                { x: 0, y: 2, zIndex: 0 }, // Water
+                { x: 1, y: 1, zIndex: 3 }, // Tree
+                { x: 2, y: 1, zIndex: 0 }  // Swamp 
             ];
-            return new PIXI.Sprite(_tiles[tailMap[id].y][tailMap[id].x])
+            var tail = new PIXI.Sprite(_tiles[tailMap[id].y][tailMap[id].x]);
+            tail.zIndex = tailMap[id].zIndex;
+            
+            return tail;
         },
         init: function() {
             for (var i = 0; i < Game.instance.getMap(map).length; i++) {
@@ -36,7 +39,6 @@ var Map = function(map) {
                     tileSprite.position.x = j * (_tailWidth / 2);
                     tileSprite.position.y = i * (_tailHeight / 2);
                     tileSprite.render = function() {};
-            
                     Game.instance.addModel(tileSprite);
                 }
             }

@@ -25,6 +25,7 @@ var Tank = function(ID) {
     var Methods = {
 
         id: ID,
+        zIndex: 1,
         speed: 2,
         speedX: 0,
         speedY: 0,

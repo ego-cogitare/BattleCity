@@ -7,8 +7,16 @@ window.onload = function() {
         var _keyboard = new Keyboard();
 
         var GameLoop = {
+            currentLevel: 0,
+            
+            screenSizes: function() {
+                return {
+                    width: this.getMap()[0].length * Game.config.tailSize.width,
+                    height: this.getMap().length * Game.config.tailSize.height
+                };
+            },
             initialize: function() {
-                this.renderer = new PIXI.autoDetectRenderer(Game.config.canvasSize.width, Game.config.canvasSize.height);
+                this.renderer = new PIXI.autoDetectRenderer(this.screenSizes().width, this.screenSizes().height);
                 document.body.appendChild(this.renderer.view);
                 this.stage = new PIXI.Container();
                 requestAnimationFrame(GameLoop.animate);
@@ -46,8 +54,11 @@ window.onload = function() {
             getTimeDelta: function() {
                 return _timeDelta;
             },
-            getMap: function(mapId) {
-                return Loader.resources['Level' + mapId].data;
+            getMapCellAt: function(x, y) {
+                return (x < 0 || y < 0 || x >= this.getMap()[0].length || y >= this.getMap().length) ? 0 : this.getMap()[y][x];
+            },
+            getMap: function() {
+                return Loader.resources['level' + this.currentLevel].data;
             }
         };
 
@@ -55,7 +66,10 @@ window.onload = function() {
 
         return  {
             addModel: GameLoop.addModel,
+            screenSize: GameLoop.screenSizes,
+            currentLevel: GameLoop.currentLevel,
             getMap: GameLoop.getMap,
+            getMapCellAt: GameLoop.getMapCellAt,
             getTime: GameLoop.getTime,
             getTimeDelta: GameLoop.getTimeDelta,
             input: _keyboard,
@@ -67,7 +81,13 @@ window.onload = function() {
     
     // Load game resources
     _.each(Game.config.assets, function(v, f) {
-        Loader.add(f, v);
+        if (typeof Game.config.assets[f] === 'object') {
+            _.each(v, function(el, i) {
+                Loader.add('level' + i, el);
+            });
+        } else {
+            Loader.add(f, v);
+        }
     });
     
     Loader.once('complete', 
@@ -139,7 +159,7 @@ window.onload = function() {
             powerUp.setPosition(100,100);
             Game.instance.addModel(powerUp);
             
-            var levelMap = new Map('01');
+            new Map(Game.instance.currentLevel);
         }
     );
     Loader.load();

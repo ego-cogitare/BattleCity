@@ -8,16 +8,16 @@ var PowerUp = function(type) {
     var _frames = new TextureExploder(
             new PIXI.Texture(
                 Loader.resources.Atlas.texture,
-                { x: _tailWidth * 16, y: _tailHeight * 7, width: _tailWidth * 7, height: _tailHeight }
+                { x: _tailWidth * 32, y: _tailHeight * 14, width: _tailWidth * 14, height: _tailHeight * 2 }
             )
-        ).explode(_tailWidth, _tailHeight);
+        ).explode(_tailWidth * 2, _tailHeight * 2);
 
     var _blank = new PIXI.Texture(
             Loader.resources.Atlas.texture,
-            { x: _tailWidth * 17, y: _tailHeight * 11, width: _tailWidth, height: _tailHeight }
+            { x: _tailWidth * 34, y: _tailHeight * 22, width: _tailWidth * 2, height: _tailHeight * 2 }
         );
 
-    var _duration = 500;
+    var _duration = 300;
 
     var _animations = {
         helmet: new Animation([ 

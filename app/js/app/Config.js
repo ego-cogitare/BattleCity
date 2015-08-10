@@ -14,6 +14,18 @@ Game = {
         shellStates: {
             ready: 'ready',
             flying: 'flying'
+        },
+        mapTails: {
+            empty: 0,
+            brick: 1,
+            rightBrick: 2,
+            bottomBrick: 3,
+            leftBrick: 4,
+            topBrick: 5,
+            concrete: 6,
+            water: 7,
+            tree: 8,
+            swamp: 9
         }
     },
     players: [
@@ -35,15 +47,14 @@ Game = {
     config: {
         assets: {
             Atlas: 'app/asset/textures/atlas4x.png',
-            Level01: 'app/asset/maps/level01.json'
-        },
-        canvasSize: {
-            width: 800,
-            height: 800
+            maps: [
+                'app/asset/maps/level01.json',
+                'app/asset/maps/level01.json'
+            ]
         },
         tailSize: {
-            width: 64,
-            height: 64
+            width: 32,
+            height: 32
         }
     }
 };

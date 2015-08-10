@@ -8,9 +8,9 @@ var Map = function(map) {
     var _tiles = new TextureExploder(
             new PIXI.Texture(
                 Loader.resources.Atlas.texture,
-                { x: _tailWidth * 16, y: _tailHeight * 4, width: _tailWidth * 3, height: _tailHeight * 2 }
+                { x: _tailWidth * 32, y: _tailHeight * 8, width: _tailWidth * 6, height: _tailHeight * 4 }
             )
-        ).explode(_tailWidth / 2, _tailHeight / 2);
+        ).explode(_tailWidth, _tailHeight);
     
     _.extend(_map, {
         getTail: function(id) {
@@ -36,15 +36,15 @@ var Map = function(map) {
                 for (var j = 0; j < Game.instance.getMap(map)[i].length; j++) {
                     
                     var tileSprite = this.getTail(Game.instance.getMap(map)[i][j]);
-                    tileSprite.position.x = j * (_tailWidth / 2);
-                    tileSprite.position.y = i * (_tailHeight / 2);
+                    tileSprite.position.x = j * _tailWidth;
+                    tileSprite.position.y = i * _tailHeight;
                     tileSprite.render = function() {};
                     Game.instance.addModel(tileSprite);
                 }
             }
         },
         render: function() {
-
+            
         }
     });
     

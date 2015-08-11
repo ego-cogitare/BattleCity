@@ -104,8 +104,9 @@ var Tank = function(ID) {
                     (
                         Utils.inArray(this.dirrection, [Game.types.tankDirrections.left, Game.types.tankDirrections.right]) &&
                         !Utils.inArray(Game.instance.getMapCellAt(Math.floor(mapPosition.x), Math.floor(mapPosition.y - 1)), this.canMoveOn)
-                    )
-                )
+                    ) ||
+                    this.collisionDetected()
+                ) 
             )
             {
                 this.speedX = 0;
@@ -114,6 +115,53 @@ var Tank = function(ID) {
                 this.moveXBy(this.speedX);
                 this.moveYBy(this.speedY);
             }
+        },
+        getShape: function(shortForm) {
+            if (shortForm) 
+                return [
+                    {
+                        x: this.position.x - _tailWidth + this.speedX,
+                        y: this.position.y - _tailHeight + this.speedY
+                    },
+                    {
+                        x: this.position.x + _tailWidth + this.speedX,
+                        y: this.position.y + _tailHeight + this.speedY
+                    }
+                ];
+            else
+                return [
+                    {
+                        x: this.position.x - _tailWidth,
+                        y: this.position.y - _tailHeight
+                    },
+                    {
+                        x: this.position.x + _tailWidth,
+                        y: this.position.y - _tailHeight
+                    },
+                    {
+                        x: this.position.x + _tailWidth,
+                        y: this.position.y + _tailHeight
+                    },
+                    {
+                        x: this.position.x - _tailWidth,
+                        y: this.position.y + _tailHeight
+                    }
+                ];
+        },
+        collisionDetected: function() {
+            for (var i = 0; i < Game.players.length; i++) {
+                if (Game.players[i].instance.getId() !== this.getId() &&
+                    Utils.rectIntersect(
+                        this.getShape(true)[0], 
+                        this.getShape(true)[1],
+                        Game.players[i].instance.getShape(true)[0],
+                        Game.players[i].instance.getShape(true)[1]
+                    )) 
+                {
+                    return true;
+                } 
+            }
+            return false;
         },
         mapCoords: function() {
             var mapX = this.position.x / _tailWidth;

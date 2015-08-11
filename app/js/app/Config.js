@@ -33,15 +33,22 @@ Game = {
             instance: null,
             scale: 1,
             speed: 4.0,
-            initX: 300,
-            initY: 550
+            initX: 200,
+            initY: 705
         },
         {
             instance: null,
             scale: 1,
             speed: 4.0,
-            initX: 700,
-            initY: 550
+            initX: 800,
+            initY: 705
+        },
+        {
+            instance: null,
+            scale: 1,
+            speed: 4.0,
+            initX: 500,
+            initY: 705
         }
     ],
     config: {

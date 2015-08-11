@@ -159,6 +159,10 @@ window.onload = function() {
             powerUp.setPosition(100,100);
             Game.instance.addModel(powerUp);
             
+            powerUp = new PowerUp('star');
+            powerUp.setPosition(400,200);
+            Game.instance.addModel(powerUp);
+            
             new Map(Game.instance.currentLevel);
         }
     );

@@ -28,7 +28,12 @@ window.onload = function() {
                 _timeDelta = _curUnixTime - _prevUnixTime;
                 _prevUnixTime = _curUnixTime;
                 for (var i = 0; i < GameLoop.stage.children.length; i++) {
-                    GameLoop.stage.children[i].render();
+                    if (GameLoop.stage.children[i].render) {
+                        GameLoop.stage.children[i].render();
+                    }
+                    if (GameLoop.stage.children[i].AIPlay) {
+                        GameLoop.stage.children[i].AIPlay();
+                    }
                 }
             },
             getTime: function() {
@@ -36,7 +41,9 @@ window.onload = function() {
             },
             addModel: function(model) {
                 GameLoop.stage.addChild(model);
-                
+                this.zIndexReorder();
+            },
+            zIndexReorder: function() {
                 GameLoop.stage.children.sort(function (a,b) {
                     if (a.zIndex < b.zIndex)
                         return -1;
@@ -73,7 +80,8 @@ window.onload = function() {
             getTime: GameLoop.getTime,
             getTimeDelta: GameLoop.getTimeDelta,
             input: _keyboard,
-            removeModel: GameLoop.removeModel
+            removeModel: GameLoop.removeModel,
+            zIndexReorder: GameLoop.zIndexReorder
         };
     });
 
@@ -112,20 +120,16 @@ window.onload = function() {
             /* Player 1 input handling */
             Game.players[0].instance.handleInput = function() {
                 if (Game.instance.input.keys.left) {
-                    this.setDirrection(Game.types.tankDirrections.left);
-                    this.setSpeedX(-this.getSpeed());
+                    this.moveLeft();
                 }
                 else if (Game.instance.input.keys.right) {
-                    this.setDirrection(Game.types.tankDirrections.right);
-                    this.setSpeedX(this.getSpeed());
+                    this.moveRight();
                 }
                 else if (Game.instance.input.keys.up) {
-                    this.setDirrection(Game.types.tankDirrections.top);
-                    this.setSpeedY(-this.getSpeed());
+                    this.moveUp();
                 }
                 else if (Game.instance.input.keys.down) {
-                    this.setDirrection(Game.types.tankDirrections.bottom);
-                    this.setSpeedY(this.getSpeed());
+                    this.moveDown();
                 }
                 if (Game.instance.input.keys.z) {
                     this.shot();
@@ -135,20 +139,16 @@ window.onload = function() {
             /* Player 2 input handling */
             Game.players[1].instance.handleInput = function() {
                 if (Game.instance.input.keys.num4) {
-                    this.setDirrection(Game.types.tankDirrections.left);
-                    this.setSpeedX(-this.getSpeed());
+                    this.moveLeft();
                 }
                 else if (Game.instance.input.keys.num6) {
-                    this.setDirrection(Game.types.tankDirrections.right);
-                    this.setSpeedX(this.getSpeed());
+                    this.moveRight();
                 }
                 else if (Game.instance.input.keys.num8) {
-                    this.setDirrection(Game.types.tankDirrections.top);
-                    this.setSpeedY(-this.getSpeed());
+                    this.moveUp();
                 }
                 else if (Game.instance.input.keys.num5) {
-                    this.setDirrection(Game.types.tankDirrections.bottom);
-                    this.setSpeedY(this.getSpeed());
+                    this.moveDown();
                 }
                 if (Game.instance.input.keys.num9) {
                     this.shot();

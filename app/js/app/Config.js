@@ -9,7 +9,8 @@ Game = {
         },
         tankStates: { 
             stop: 'stop', 
-            move: 'move'
+            move: 'move',
+            explosion: 'explosion'
         },
         shellStates: {
             ready: 'ready',
@@ -41,13 +42,6 @@ Game = {
             scale: 1,
             speed: 4.0,
             initX: 800,
-            initY: 705
-        },
-        {
-            instance: null,
-            scale: 1,
-            speed: 4.0,
-            initX: 500,
             initY: 705
         }
     ],

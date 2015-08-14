@@ -3,7 +3,7 @@ var Shell = function() {
     var _sprite = new PIXI.Sprite(
             new PIXI.Texture(
                 Loader.resources.Atlas.texture,
-                { x: 1288, y: 408, width: 16, height: 32 }
+                { x: 1288, y: 72, width: 16, height: 32 }
             )
         );
     

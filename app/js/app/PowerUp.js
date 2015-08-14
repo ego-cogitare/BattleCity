@@ -8,7 +8,7 @@ var PowerUp = function(type) {
     var _frames = new TextureExploder(
             new PIXI.Texture(
                 Loader.resources.Atlas.texture,
-                { x: _tailWidth * 32, y: _tailHeight * 14, width: _tailWidth * 14, height: _tailHeight * 2 }
+                { x: _tailWidth * 32, y: _tailHeight * 4, width: _tailWidth * 14, height: _tailHeight * 2 }
             )
         ).explode(_tailWidth * 2, _tailHeight * 2);
 

@@ -24,7 +24,7 @@ var Tank = function(ID) {
     var _explosion = new TextureExploder(
         new PIXI.Texture(
             Loader.resources.Atlas.texture,
-            { x: _tailWidth * 30, y: _tailHeight * 15, width: _tailWidth * 14, height: _tailHeight * 4 }
+            { x: _tailWidth * 32, y: _tailHeight * 11, width: _tailWidth * 12, height: _tailHeight * 8 }
         )
     ).explode(_tailWidth * 4, _tailHeight * 4);
     
@@ -33,9 +33,15 @@ var Tank = function(ID) {
             _explosion[0][0], 
             _explosion[0][1],
             _explosion[0][2],
-            _explosion[0][3],
+            _explosion[1][0],
+            _explosion[1][1],
+            _explosion[1][0],
             _explosion[0][2]
-        ], 100)
+        ], 
+        60, 
+        function() {
+            Game.players[ID].instance.reset();
+        })
     };
     
     return _.extend(
@@ -49,10 +55,9 @@ var Tank = function(ID) {
             speedY: 0,
             dirrection: Game.types.tankDirrections.top,
             curentState: Game.types.tankStates.stop,
-            holder: [
-                new Shell()
-            ],
-            cooldownTime: 100,
+            holder: [],
+            holderSize: Game.players[ID].holderSize,
+            cooldownTime: Game.players[ID].cooldownTime,
             lastShootTime: 0,
             pivot: new PIXI.Point(_tailWidth, _tailHeight),
             canMoveOn: [
@@ -89,11 +94,12 @@ var Tank = function(ID) {
             },
             die: function() {
                 this.updateZIndex(5);
+                _animations.explosion.reset();
                 this.setState(Game.types.tankStates.explosion);
             },
             updateState: function() {
                 /* If speed not zero - model is in a move state */
-                if ((this.speedX !== 0 || this.speedY !== 0) && (!Utils.inArray(this.curentState, [Game.types.tankStates.explosion]))) {
+                if ((this.speedX !== 0 || this.speedY !== 0) && this.canMove()) {
                     this.curentState = Game.types.tankStates.move;
                 } 
                 else if (this.curentState === Game.types.tankStates.move && this.speedX === 0 && this.speedY === 0) {
@@ -233,6 +239,12 @@ var Tank = function(ID) {
                     break;
                 }
             },
+            getHolder: function() {
+                return this.holder;
+            },
+            getHolderSize: function() {
+                return this.holderSize.length;
+            },
             shot: function() {
                 for (var i = 0; i < this.holder.length; i++) {
                     if (this.holder[i].getState() === Game.types.shellStates.ready && Game.instance.getTime() - this.lastShootTime >= this.cooldownTime) {
@@ -248,9 +260,13 @@ var Tank = function(ID) {
             increaseHolder: function() {
                 this.holder.push(new Shell());
                 Game.instance.addModel(this.holder[this.holder.length - 1]);
+                this.holderSize++;
             },
             decreaseHolder: function() {
                 Game.instance.removeModel(this.holder.pop());
+                if (this.holderSize > 0) {
+                    this.holderSize--;
+                }
             },
             getState: function() {
                 return this.curentState;
@@ -303,35 +319,63 @@ var Tank = function(ID) {
                 this.position.x = x;
                 this.position.y = y;
             },
+            canMove: function() {
+                return Utils.inArray(this.curentState, [Game.types.tankStates.stop, Game.types.tankStates.move]);
+            },
             moveUp: function() {
-                this.setDirrection(Game.types.tankDirrections.top);
-                this.setSpeedY(-this.getSpeed());
+                if (this.canMove()) {
+                    this.setDirrection(Game.types.tankDirrections.top);
+                    this.setSpeedY(-this.getSpeed());
+                }
             },
             moveRight: function() {
-                this.setDirrection(Game.types.tankDirrections.right);
-                this.setSpeedX(this.getSpeed());
+                if (this.canMove()) {
+                    this.setDirrection(Game.types.tankDirrections.right);
+                    this.setSpeedX(this.getSpeed());
+                }
             },
             moveDown: function() {
-                this.setDirrection(Game.types.tankDirrections.bottom);
-                this.setSpeedY(this.getSpeed());
+                if (this.canMove()) {
+                    this.setDirrection(Game.types.tankDirrections.bottom);
+                    this.setSpeedY(this.getSpeed());
+                }
             },
             moveLeft: function() {
-                this.setDirrection(Game.types.tankDirrections.left);
-                this.setSpeedX(-this.getSpeed());
+                if (this.canMove()) {
+                    this.setDirrection(Game.types.tankDirrections.left);
+                    this.setSpeedX(-this.getSpeed());
+                }
             },
             updateZIndex: function(zIndex) {
                 this.zIndex = zIndex;
                 Game.instance.zIndexReorder();
             },
+            reset: function() {
+                
+                this.setState(Game.types.tankStates.stop);
+                
+                // Initialize holder
+                this.holder = [];
+                for (var i = 0; i < this.holderSize; i++) {
+                    this.holder.push(new Shell());
+                    Game.instance.addModel(this.holder[i]);
+                }
+                
+                // Default body type
+                this.setBodyType(0);
+                
+                // Default dirrection
+                this.setDirrection(Game.types.tankDirrections.top);
+                
+                // Player speed / scale etc
+                this.setScale(Game.players[this.id].scale);
+                this.setSpeed(Game.players[this.id].speed);
+                this.setXY(Game.players[this.id].initX, Game.players[this.id].initY);
+            },
 
             initialize: function() {
                 // Initialize tank body type
-                this.setBodyType(0);
-
-                // Initialize holder
-                for (var i = 0; i < this.holder.length; i++) {
-                    Game.instance.addModel(this.holder[i]);
-                }
+                this.reset();
                 
                 // If player type equals to bot
                 if (this.getId() === 1) {

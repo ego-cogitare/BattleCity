@@ -32,6 +32,8 @@ Game = {
     players: [
         {
             instance: null,
+            holderSize: 2,
+            cooldownTime: 300,
             scale: 1,
             speed: 4.0,
             initX: 200,
@@ -39,6 +41,8 @@ Game = {
         },
         {
             instance: null,
+            holderSize: 2,
+            cooldownTime: 750,
             scale: 1,
             speed: 4.0,
             initX: 800,

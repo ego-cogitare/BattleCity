@@ -108,11 +108,6 @@ window.onload = function() {
                 /* Create player instance */
                 Game.players[i].instance = new Tank(i);
 
-                /* Player speed / scale etc */
-                Game.players[i].instance.setScale(Game.players[i].scale);
-                Game.players[i].instance.setSpeed(Game.players[i].speed);
-                Game.players[i].instance.setXY(Game.players[i].initX, Game.players[i].initY);
-
                 /* Add player to scene */
                 Game.instance.addModel(Game.players[i].instance);
             }
@@ -157,10 +152,6 @@ window.onload = function() {
             
             var powerUp = new PowerUp('gun');
             powerUp.setPosition(100,100);
-            Game.instance.addModel(powerUp);
-            
-            powerUp = new PowerUp('star');
-            powerUp.setPosition(400,200);
             Game.instance.addModel(powerUp);
             
             new Map(Game.instance.currentLevel);

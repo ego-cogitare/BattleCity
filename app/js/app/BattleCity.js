@@ -1,6 +1,8 @@
 window.onload = function() {
     var BattleCity = (function(){
             
+        var _tailWidth = Game.config.tailSize.width;
+        var _tailHeight = Game.config.tailSize.height;
         var _prevUnixTime = new Date().getTime();
         var _curUnixTime = 0;
         var _timeDelta = 0;
@@ -66,6 +68,40 @@ window.onload = function() {
             },
             getMap: function() {
                 return Loader.resources['level' + this.currentLevel].data;
+            },
+            getMapSize: function() {
+                return {
+                    width: this.getMap()[0].length,
+                    height: this.getMap().length
+                };
+            },
+            getChildren: function() {
+                return GameLoop.stage.children;
+            },
+            getChildrenByType: function(types) {
+                return _.filter(GameLoop.stage.children, function(child) {
+                    return Utils.inArray(child.type, types);
+                });
+            },
+            getRandomPowerUp: function() {
+                var powerUps = _.filter(Game.types.powerUps, function(powerUp) {
+                    return powerUp.applyable;
+                });
+                return powerUps[Math.round((powerUps.length - 1) * Math.random())].id;
+            },
+            throwPowerUp: function(powerUpType) {
+                // PowerUp position
+                var mapSize = GameLoop.getMapSize();
+                
+                if (typeof powerUpType === 'undefined') {
+                    powerUpType = GameLoop.getRandomPowerUp();
+                }
+                var powerUp = new PowerUp(powerUpType);
+                powerUp.setPosition(
+                    Math.round(mapSize.width * _tailWidth * Math.random()),
+                    Math.round(mapSize.height * _tailHeight * Math.random())
+                );
+                Game.instance.addModel(powerUp);
             }
         };
 
@@ -76,12 +112,15 @@ window.onload = function() {
             screenSize: GameLoop.screenSizes,
             currentLevel: GameLoop.currentLevel,
             getMap: GameLoop.getMap,
+            getChildren: GameLoop.getChildren,
+            getChildrenByType: GameLoop.getChildrenByType,
             getMapCellAt: GameLoop.getMapCellAt,
             getTime: GameLoop.getTime,
             getTimeDelta: GameLoop.getTimeDelta,
             input: _keyboard,
             removeModel: GameLoop.removeModel,
-            zIndexReorder: GameLoop.zIndexReorder
+            zIndexReorder: GameLoop.zIndexReorder,
+            throwPowerUp: GameLoop.throwPowerUp
         };
     });
 
@@ -149,9 +188,8 @@ window.onload = function() {
                     this.shot();
                 }
             };
-            var powerUp = new PowerUp(Game.types.powerUps.grenade);
-            powerUp.setPosition(100,100);
-            Game.instance.addModel(powerUp);
+            
+            Game.instance.throwPowerUp();
             
             new Map(Game.instance.currentLevel);
         }

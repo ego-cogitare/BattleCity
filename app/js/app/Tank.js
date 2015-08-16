@@ -48,6 +48,7 @@ var Tank = function(ID) {
         new PIXI.Sprite(), 
         {
             id: ID,
+            type: 'player',
             bodyType: 0,
             zIndex: 1,
             speed: 2,
@@ -96,12 +97,10 @@ var Tank = function(ID) {
                 return this.bodyType;
             },
             die: function() {
-                for (var i = 0; i < this.holder.length; i++) {
-                    Game.instance.removeModel(this.holder[i]);
-                }
+                this.clearPowerUps();
                 this.updateZIndex(5);
-                _animations.explosion.reset();
                 this.setState(Game.types.tankStates.explosion);
+                _animations.explosion.reset();
             },
             updateState: function() {
                 /* If speed not zero - model is in a move state */
@@ -112,22 +111,27 @@ var Tank = function(ID) {
                     this.curentState = Game.types.tankStates.stop;
                 }
             },
-            applyPowerUp: function(powerUpType) {
-                var powerUp = new PowerUp(powerUpType);
+            applyPowerUp: function(powerUp) {
+                if (!powerUp.applyable) {
+                    return false;
+                }
+                var powerUpId = powerUp.id;
+                Game.instance.removeModel(powerUp);
+                delete powerUp;
                 
-                switch (powerUpType) {
-                    case Game.types.powerUps.protectiveField: 
-                        powerUp.attachTo(this);
-                        Game.instance.addModel(powerUp);
-                        this.powerUps.push(powerUp);
+                switch (powerUpId) {
+                    case Game.types.powerUps.helmet.id:
+                        var protectiveField = new PowerUp(Game.types.powerUps.protectiveField.id); 
+                        protectiveField.attachTo(this);
+                        Game.instance.addModel(protectiveField);
+                        this.powerUps.push(protectiveField);
                     break;
                     
-                    case Game.types.powerUps.grenade: 
+                    case Game.types.powerUps.grenade.id: 
                         this.die();
-                        delete powerUp;
                     break;
                     
-                    case Game.types.powerUps.star: 
+                    case Game.types.powerUps.star.id: 
                         if (this.bodyType < 3) {
                             switch (this.bodyType) {
                                 case 0: 
@@ -145,7 +149,7 @@ var Tank = function(ID) {
                         }
                     break;
                     
-                    case Game.types.powerUps.gun: 
+                    case Game.types.powerUps.gun.id: 
                         this.holder[0].setSpeed(15);
                         for (var i = this.getBodyType() + 1; i <= 3; i++) {
                             this.increaseHolder().setSpeed(15);
@@ -154,11 +158,11 @@ var Tank = function(ID) {
                     break;
                 }
                 
-                return powerUp;
+                Game.instance.throwPowerUp();
             },
             removePowerUp: function(powerUpType) {
                 _.each(this.powerUps, function(powerUp, index) {
-                    if (powerUp.getType() === powerUpType) {
+                    if (powerUp.getId() === powerUpType) {
                         Game.instance.removeModel(powerUp);
                         delete powerUp;
                         delete this.powerUps[index];
@@ -237,49 +241,37 @@ var Tank = function(ID) {
                     this.moveYBy(this.speedY);
                 }
             },
-            getShape: function(shortForm) {
-                if (shortForm) 
-                    return [
-                        {
-                            x: this.position.x - _tailWidth + this.speedX,
-                            y: this.position.y - _tailHeight + this.speedY
-                        },
-                        {
-                            x: this.position.x + _tailWidth + this.speedX,
-                            y: this.position.y + _tailHeight + this.speedY
-                        }
-                    ];
-                else
-                    return [
-                        {
-                            x: this.position.x - _tailWidth,
-                            y: this.position.y - _tailHeight
-                        },
-                        {
-                            x: this.position.x + _tailWidth,
-                            y: this.position.y - _tailHeight
-                        },
-                        {
-                            x: this.position.x + _tailWidth,
-                            y: this.position.y + _tailHeight
-                        },
-                        {
-                            x: this.position.x - _tailWidth,
-                            y: this.position.y + _tailHeight
-                        }
-                    ];
+            getShape: function() {
+                return [
+                    {
+                        x: this.position.x - _tailWidth + this.speedX,
+                        y: this.position.y - _tailHeight + this.speedY
+                    },
+                    {
+                        x: this.position.x + _tailWidth + this.speedX,
+                        y: this.position.y + _tailHeight + this.speedY
+                    }
+                ];
             },
             collisionDetected: function() {
-                for (var i = 0; i < Game.players.length; i++) {
-                    if (Game.players[i].instance.getId() !== this.getId() &&
+                var children = Game.instance.getChildrenByType(['player','powerUp']);
+                
+                for (var i = 0; i < children.length; i++) {
+                    if ((children[i].getId() !== this.getId() || children[i].type !== this.type) &&
                         Utils.rectIntersect(
-                            this.getShape(true)[0], 
-                            this.getShape(true)[1],
-                            Game.players[i].instance.getShape(true)[0],
-                            Game.players[i].instance.getShape(true)[1]
+                            this.getShape()[0], 
+                            this.getShape()[1],
+                            children[i].getShape()[0],
+                            children[i].getShape()[1]
                         )) 
                     {
-                        return true;
+                        // If detected colision with powerUp we should apply it to player
+                        if (children[i].type === 'powerUp') {
+                            this.applyPowerUp(children[i]);
+                        }
+                        else {
+                            return children[i];
+                        }
                     } 
                 }
                 return false;
@@ -321,6 +313,7 @@ var Tank = function(ID) {
             },
             increaseHolder: function() {
                 this.holder.push(new Shell());
+                this.holder[this.holder.length - 1].setOwner(this.id);
                 Game.instance.addModel(this.holder[this.holder.length - 1]);
                 return this.holder[this.holderSize++];
             },
@@ -412,18 +405,27 @@ var Tank = function(ID) {
                 this.zIndex = zIndex;
                 Game.instance.zIndexReorder();
             },
+            clearPowerUps: function() {
+                for (var i = 0; i < this.powerUps.length; i++) {
+                    Game.instance.removeModel(this.powerUps[i]);
+                    delete this.powerUps[i];
+                }
+                this.powerUps = [];
+            },
             reset: function() {
-                
                 this.setState(Game.types.tankStates.stop);
                 
+                this.updateZIndex(1);
+                
                 // Disapply all powerUps
-                this.powerUps = [];
+                this.clearPowerUps();
                 
                 // Initialize holder
                 this.holder = [];
                 this.holderSize = Game.players[this.id].holderSize;
                 for (var i = 0; i < this.holderSize; i++) {
                     this.holder.push(new Shell());
+                    this.holder[i].setOwner(this.id);
                     Game.instance.addModel(this.holder[i]);
                 }
                 

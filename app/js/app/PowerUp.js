@@ -12,7 +12,7 @@ var PowerUp = function(type) {
     var _duration = 300;
     
     switch (type) {
-        case Game.types.powerUps.protectiveField:
+        case Game.types.powerUps.protectiveField.id:
             var _duration = 50;
             _textureRegion = { x: _tailWidth * 32, y: 0, width: _tailWidth * 4, height: _tailHeight * 2 };
         break;
@@ -36,60 +36,72 @@ var PowerUp = function(type) {
 
     var _animations = [];
     
-    _animations[Game.types.powerUps.helmet] = 
+    _animations[Game.types.powerUps.helmet.id] = 
         new Animation([ 
             _frames[0][0],
             _blank
         ], _duration);
         
-    _animations[Game.types.powerUps.clock] = 
+    _animations[Game.types.powerUps.clock.id] = 
         new Animation([ 
             _frames[0][1],
             _blank
         ], _duration);
         
-    _animations[Game.types.powerUps.shovel] = 
+    _animations[Game.types.powerUps.shovel.id] = 
         new Animation([ 
             _frames[0][2],
             _blank
         ], _duration);
         
-    _animations[Game.types.powerUps.star] = 
+    _animations[Game.types.powerUps.star.id] = 
         new Animation([ 
             _frames[0][3],
             _blank
         ], _duration);
         
-    _animations[Game.types.powerUps.grenade] = 
+    _animations[Game.types.powerUps.grenade.id] = 
         new Animation([ 
             _frames[0][4],
             _blank
         ], _duration);
         
-    _animations[Game.types.powerUps.tank] = 
+    _animations[Game.types.powerUps.tank.id] = 
         new Animation([ 
             _frames[0][5],
             _blank
         ], _duration);
         
-    _animations[Game.types.powerUps.gun] = 
+    _animations[Game.types.powerUps.gun.id] = 
         new Animation([ 
             _frames[0][6],
             _blank
         ], _duration);
         
-    _animations[Game.types.powerUps.protectiveField] = 
+    _animations[Game.types.powerUps.protectiveField.id] = 
         new Animation([ 
             _frames[0][0],
             _frames[0][1]
         ], _duration);
     
-    _.extend(_sprite, {
+    return _.extend(_sprite, {
         zIndex: 2,
-        type: type,
+        id: type,
+        type: 'powerUp',
         pivot: new PIXI.Point(_tailWidth, _tailHeight),
         attachedTo: null,
+        shapeTrimValue: 10,
         
+        getNameById: function(id) {
+            var result = null;
+            _.each(Game.types.powerUps, function(powerUp, powerUpName) {
+                if (powerUp.id === id) {
+                    result = powerUpName;
+                    return;
+                }
+            });
+            return result;
+        },
         setPosition: function(x, y) {
             this.position.x = x;
             this.position.y = y;
@@ -105,6 +117,9 @@ var PowerUp = function(type) {
         die: function() {
             Game.instance.removeModel(this);
         },
+        getId: function() {
+            return this.id;
+        },
         getType: function() {
             return this.type;
         },
@@ -113,8 +128,22 @@ var PowerUp = function(type) {
                 _sprite.position = this.attachedTo.position;
             }
             _sprite.texture = _animations[type].getFrame(Game.instance.getTimeDelta());
+        },
+        getShape: function() {
+            return [
+                {
+                    x: this.position.x - _tailWidth + this.shapeTrimValue,
+                    y: this.position.y - _tailHeight + this.shapeTrimValue
+                },
+                {
+                    x: this.position.x + _tailWidth - this.shapeTrimValue,
+                    y: this.position.y + _tailHeight - this.shapeTrimValue
+                }
+            ];
+        },
+        initialize: function() {
+            this.applyable = Game.types.powerUps[this.getNameById(type)].applyable;
+            return this;
         }
-    });
-    
-    return _sprite;
+    }).initialize();
 };

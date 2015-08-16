@@ -29,14 +29,38 @@ Game = {
             swamp: 9
         },
         powerUps: {
-            helmet: 0,
-            clock: 1,
-            shovel: 2,
-            star: 3,
-            grenade: 4,
-            tank: 5,
-            gun: 6,
-            protectiveField: 7
+            helmet: {
+                id: 0,
+                applyable: true
+            },
+            clock: {
+                id: 1,
+                applyable: true
+            },
+            shovel: {
+                id: 2,
+                applyable: true
+            },
+            star: {
+                id: 3,
+                applyable: true
+            },
+            grenade: {
+                id: 4,
+                applyable: true
+            },
+            tank: {
+                id: 5,
+                applyable: true
+            },
+            gun: {
+                id: 6,
+                applyable: true
+            },
+            protectiveField: {
+                id: 7,
+                applyable: false
+            }
         }
     },
     players: [
@@ -46,8 +70,8 @@ Game = {
             cooldownTime: 300,
             scale: 1,
             speed: 4.0,
-            initX: 200,
-            initY: 705
+            initX: 300,
+            initY: 800
         },
         {
             instance: null,
@@ -55,8 +79,8 @@ Game = {
             cooldownTime: 750,
             scale: 1,
             speed: 4.0,
-            initX: 800,
-            initY: 705
+            initX: 532,
+            initY: 800
         }
     ],
     config: {

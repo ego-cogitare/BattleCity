@@ -65,6 +65,7 @@ var Tank = function(ID) {
                 Game.types.mapTails.tree, 
                 Game.types.mapTails.swamp
             ],
+            powerUps: [],
 
             getBodyType: function() {
                 return this.bodyType;
@@ -88,11 +89,16 @@ var Tank = function(ID) {
             },
             improveBodyType: function() {
                 this.setBodyType(++this.bodyType);
+                return this.bodyType;
             },
             worsenBodyType: function() {
                 this.setBodyType(--this.bodyType);
+                return this.bodyType;
             },
             die: function() {
+                for (var i = 0; i < this.holder.length; i++) {
+                    Game.instance.removeModel(this.holder[i]);
+                }
                 this.updateZIndex(5);
                 _animations.explosion.reset();
                 this.setState(Game.types.tankStates.explosion);
@@ -105,6 +111,62 @@ var Tank = function(ID) {
                 else if (this.curentState === Game.types.tankStates.move && this.speedX === 0 && this.speedY === 0) {
                     this.curentState = Game.types.tankStates.stop;
                 }
+            },
+            applyPowerUp: function(powerUpType) {
+                var powerUp = new PowerUp(powerUpType);
+                
+                switch (powerUpType) {
+                    case Game.types.powerUps.protectiveField: 
+                        powerUp.attachTo(this);
+                        Game.instance.addModel(powerUp);
+                        this.powerUps.push(powerUp);
+                    break;
+                    
+                    case Game.types.powerUps.grenade: 
+                        this.die();
+                        delete powerUp;
+                    break;
+                    
+                    case Game.types.powerUps.star: 
+                        if (this.bodyType < 3) {
+                            switch (this.bodyType) {
+                                case 0: 
+                                    this.holder[0].setSpeed(15);
+                                break;
+                                case 1: 
+                                    this.increaseHolder().setSpeed(15);
+                                break;
+                                case 2: 
+                                    this.increaseHolder().setSpeed(15);
+                                break;
+                            }
+                            this.improveBodyType();
+                            this.powerUps.push(powerUp);
+                        }
+                    break;
+                    
+                    case Game.types.powerUps.gun: 
+                        this.holder[0].setSpeed(15);
+                        for (var i = this.getBodyType() + 1; i <= 3; i++) {
+                            this.increaseHolder().setSpeed(15);
+                        }
+                        this.setBodyType(3);
+                    break;
+                }
+                
+                return powerUp;
+            },
+            removePowerUp: function(powerUpType) {
+                _.each(this.powerUps, function(powerUp, index) {
+                    if (powerUp.getType() === powerUpType) {
+                        Game.instance.removeModel(powerUp);
+                        delete powerUp;
+                        delete this.powerUps[index];
+                        if (this.powerUps.length === 1) {
+                            this.powerUps = [];
+                        }
+                    }
+                }, this);
             },
             render: function() {
                 this.setSpeedX(0);
@@ -260,7 +322,7 @@ var Tank = function(ID) {
             increaseHolder: function() {
                 this.holder.push(new Shell());
                 Game.instance.addModel(this.holder[this.holder.length - 1]);
-                this.holderSize++;
+                return this.holder[this.holderSize++];
             },
             decreaseHolder: function() {
                 Game.instance.removeModel(this.holder.pop());
@@ -354,8 +416,12 @@ var Tank = function(ID) {
                 
                 this.setState(Game.types.tankStates.stop);
                 
+                // Disapply all powerUps
+                this.powerUps = [];
+                
                 // Initialize holder
                 this.holder = [];
+                this.holderSize = Game.players[this.id].holderSize;
                 for (var i = 0; i < this.holderSize; i++) {
                     this.holder.push(new Shell());
                     Game.instance.addModel(this.holder[i]);

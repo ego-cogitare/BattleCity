@@ -149,8 +149,7 @@ window.onload = function() {
                     this.shot();
                 }
             };
-            
-            var powerUp = new PowerUp('gun');
+            var powerUp = new PowerUp(Game.types.powerUps.grenade);
             powerUp.setPosition(100,100);
             Game.instance.addModel(powerUp);
             

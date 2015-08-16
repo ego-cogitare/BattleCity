@@ -8,7 +8,7 @@ var Shell = function() {
         );
     
     _.extend(_sprite, {
-        _speed: 10,
+        _speed: 7,
         _speedX: 0,
         _speedY: 0,
         _dirrection: null,

@@ -27,12 +27,22 @@ Game = {
             water: 7,
             tree: 8,
             swamp: 9
+        },
+        powerUps: {
+            helmet: 0,
+            clock: 1,
+            shovel: 2,
+            star: 3,
+            grenade: 4,
+            tank: 5,
+            gun: 6,
+            protectiveField: 7
         }
     },
     players: [
         {
             instance: null,
-            holderSize: 2,
+            holderSize: 1,
             cooldownTime: 300,
             scale: 1,
             speed: 4.0,
@@ -41,7 +51,7 @@ Game = {
         },
         {
             instance: null,
-            holderSize: 2,
+            holderSize: 1,
             cooldownTime: 750,
             scale: 1,
             speed: 4.0,

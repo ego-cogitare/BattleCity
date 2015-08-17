@@ -112,6 +112,7 @@ window.onload = function() {
             screenSize: GameLoop.screenSizes,
             currentLevel: GameLoop.currentLevel,
             getMap: GameLoop.getMap,
+            getMapSize: GameLoop.getMapSize,
             getChildren: GameLoop.getChildren,
             getChildrenByType: GameLoop.getChildrenByType,
             getMapCellAt: GameLoop.getMapCellAt,
@@ -191,7 +192,7 @@ window.onload = function() {
             
             Game.instance.throwPowerUp();
             
-            new Map(Game.instance.currentLevel);
+            window.map = new Map(Game.instance.currentLevel);
         }
     );
     Loader.load();

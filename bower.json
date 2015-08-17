@@ -2,7 +2,7 @@
 	"name": "battle-city",
 	"version": "0.0.1",
 	"dependencies": {
-		"pixi":"latest",
+		"pixi": "latest",
 		"underscore": "1.8.3"
 	}
 }

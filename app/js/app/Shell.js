@@ -1,13 +1,40 @@
 var Shell = function() {
     
-    var _sprite = new PIXI.Sprite(
+    var _tailWidth = Game.config.tailSize.width;
+    var _tailHeight = Game.config.tailSize.height;
+    var _explosion = new PIXI.Texture(
+        Loader.resources.Atlas.texture,
+        { x: _tailWidth * 33, y: _tailHeight * 12, width: _tailWidth  * 2, height: _tailHeight * 2 }
+    );
+    var _animations = {
+        explosion: new Animation(
+            [ 
+                _explosion,
+                _explosion
+            ], 
+            100, 
+            function() {
+                Shell.reset();
+            }
+        ),
+        flying: new Animation(
+            [ 
+                new PIXI.Texture(
+                    Loader.resources.Atlas.texture,
+                    { x: 1288, y: 72, width: _tailWidth, height: _tailHeight }
+                )
+            ], 
+            999
+        )
+    };
+    
+    var Shell = _.extend(
+        new PIXI.Sprite(
             new PIXI.Texture(
                 Loader.resources.Atlas.texture,
-                { x: 1288, y: 72, width: 16, height: 32 }
+                { x: 1288, y: 72, width: _tailWidth, height: _tailHeight }
             )
-        );
-    
-    _.extend(_sprite, 
+        ), 
         {
             _speed: 7,
             _speedX: 0,
@@ -17,10 +44,22 @@ var Shell = function() {
             id: new Date().getTime(),
             type: 'shell',
             zIndex: 3,
-            pivot: new PIXI.Point(8, 16),
+            pivot: new PIXI.Point(_tailWidth / 2, _tailHeight / 2),
             state: Game.types.shellStates.ready,
             visible: false,
             ownerId: null,
+            collideWith: [
+                Game.types.mapTails.brick, 
+                Game.types.mapTails.rightBrick, 
+                Game.types.mapTails.bottomBrick,
+                Game.types.mapTails.leftBrick,
+                Game.types.mapTails.topBrick,
+                Game.types.mapTails.concrete,
+                Game.types.mapTails.flagAliveTopLeft,
+                Game.types.mapTails.flagAliveTopRight,
+                Game.types.mapTails.flagAliveBottomLeft,
+                Game.types.mapTails.flagAliveBottomRight
+            ],
 
             setDirrection: function(dirrection) {
                 if (typeof Game.types.tankDirrections[dirrection] !== 'undefined') {
@@ -39,6 +78,14 @@ var Shell = function() {
             },
             getOwner: function() {
                 return this.ownerId;
+            },
+            setState: function(state) {
+                this.state = state;
+            },
+            die: function() {
+                this._speedX = this._speedY = 0;
+                this.setState(Game.types.shellStates.explosion);
+                _animations.explosion.reset();
             },
             reset: function() {
                 this.visible = false;
@@ -80,16 +127,71 @@ var Shell = function() {
             render: function() {
                 this.position.x += this._speedX;
                 this.position.y += this._speedY;
+                
+                if (this.state !== Game.types.shellStates.ready) {
+                    this.texture = _animations[this.state].getFrame(Game.instance.getTimeDelta());
+                }
+                
+                if (this.state === Game.types.shellStates.flying && this.collisionDetected()) {
+                    this.die();
+                }
 
-                if (this.position.x > Game.instance.screenSize().width || this.position.x < 0 || this.position.y > Game.instance.screenSize().height || this.position.y < 0) {
+                if (this.position.x > Game.instance.screenSize().width || 
+                    this.position.x < 0 || this.position.y > Game.instance.screenSize().height || 
+                    this.position.y < 0
+                ) {
                     this.reset();
                 }
+            },
+            getShape: function() {
+                return [
+                    {
+                        x: this.position.x - _tailWidth + this.speedX,
+                        y: this.position.y - _tailHeight + this.speedY
+                    },
+                    {
+                        x: this.position.x + _tailWidth + this.speedX,
+                        y: this.position.y + _tailHeight + this.speedY
+                    }
+                ];
+            },
+            mapCoords: function() {
+                var mapX = Math.round(this.position.x / _tailWidth);
+                var mapY = Math.round(this.position.y / _tailHeight);
+
+                return { x: mapX, y: mapY };
+            },
+            collisionDetected: function() {
+                var mapCoords = this.mapCoords();
+                
+                return Utils.inArray(
+                    Game.instance.getMapCellAt(mapCoords.x, mapCoords.y),
+                    this.collideWith
+                );
+//                var children = Game.instance.getChildrenByType(['tail']);
+//                
+//                for (var i = 0; i < children.length; i++) {
+//                    if (children[i].id === 1 &&
+//                        Utils.rectIntersect(
+//                            this.getShape()[0], 
+//                            this.getShape()[1],
+//                            children[i].getShape()[0],
+//                            children[i].getShape()[1]
+//                        )) 
+//                    {
+//                        return children[i];
+//                    } 
+//                }
+                return false;
+            },
+            initialize: function() {
+                this.scale.x = 1;
+                this.scale.y = 1;
+                
+                return this;
             }
         }
-    );
+    ).initialize();
     
-    _sprite.scale.x = 1;
-    _sprite.scale.y = 1;
-
-    return _sprite;
+    return Shell;
 };

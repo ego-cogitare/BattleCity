@@ -14,7 +14,8 @@ Game = {
         },
         shellStates: {
             ready: 'ready',
-            flying: 'flying'
+            flying: 'flying',
+            explosion: 'explosion'
         },
         mapTails: {
             empty: 0,
@@ -26,7 +27,15 @@ Game = {
             concrete: 6,
             water: 7,
             tree: 8,
-            swamp: 9
+            swamp: 9,
+            flagAliveTopLeft: 10,
+            flagAliveTopRight: 11,
+            flagAliveBottomLeft: 12,
+            flagAliveBottomRight: 13,
+            flagDeadTopLeft: 14,
+            flagDeadTopRight: 15,
+            flagDeadBottomLeft: 16,
+            flagDeadBottomRight: 17
         },
         powerUps: {
             helmet: {
@@ -66,8 +75,8 @@ Game = {
     players: [
         {
             instance: null,
-            holderSize: 1,
-            cooldownTime: 300,
+            holderSize: 2,
+            cooldownTime: 100,
             scale: 1,
             speed: 4.0,
             initX: 300,
@@ -76,7 +85,7 @@ Game = {
         {
             instance: null,
             holderSize: 1,
-            cooldownTime: 750,
+            cooldownTime: 100,
             scale: 1,
             speed: 4.0,
             initX: 532,

@@ -9,3 +9,13 @@
 7 - Water
 8 - Tree
 9 - Swamp
+
+10 - Flag alive: top-left
+11 - Flag alive: top-right
+12 - Flag alive: bottom-left
+13 - Flag alive: bottom-right
+
+14 - Flag dead: top-left
+15 - Flag dead: top-right
+16 - Flag dead: bottom-left
+17 - Flag dead: bottom-right

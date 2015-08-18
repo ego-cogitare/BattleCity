@@ -75,7 +75,7 @@ Game = {
     players: [
         {
             instance: null,
-            holderSize: 2,
+            holderSize: 1,
             cooldownTime: 100,
             scale: 1,
             speed: 4.0,

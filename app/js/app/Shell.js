@@ -163,13 +163,41 @@ var Shell = function() {
             },
             collisionDetected: function() {
                 var mapCoords = this.mapCoords();
+                var mapCell = Game.instance.getMapCellAt(mapCoords.x, mapCoords.y);
+                var mapCell_x = Game.instance.getMapCellAt(mapCoords.x - 1, mapCoords.y);
+                var mapCell_y = Game.instance.getMapCellAt(mapCoords.x, mapCoords.y - 1);
                 
-                return Utils.inArray(
-                    Game.instance.getMapCellAt(mapCoords.x, mapCoords.y),
+                var colided = Utils.inArray(
+                    mapCell,
                     this.collideWith
                 );
-//                var children = Game.instance.getChildrenByType(['tail']);
-//                
+        
+                var colided_x = Utils.inArray(
+                    mapCell_x,
+                    this.collideWith
+                );
+        
+                var colided_y = Utils.inArray(
+                    mapCell_y,
+                    this.collideWith
+                );
+        
+                if (colided || colided_x || colided_y) {
+                    switch (this._dirrection) {
+                        case Game.types.tankDirrections.top: case Game.types.tankDirrections.bottom: 
+                            window.map.replaceCell(mapCoords.x, mapCoords.y, 0);
+                            window.map.replaceCell(mapCoords.x - 1, mapCoords.y, 0);
+                        break;
+                        
+                        case Game.types.tankDirrections.left: case Game.types.tankDirrections.right: 
+                            window.map.replaceCell(mapCoords.x, mapCoords.y, 0);
+                            window.map.replaceCell(mapCoords.x, mapCoords.y - 1, 0);
+                        break;
+                    } 
+                }
+                
+                return ((colided || colided_x) && this._speedX === 0) || ((colided || colided_y) && this._speedY === 0);
+                
 //                for (var i = 0; i < children.length; i++) {
 //                    if (children[i].id === 1 &&
 //                        Utils.rectIntersect(
@@ -182,7 +210,6 @@ var Shell = function() {
 //                        return children[i];
 //                    } 
 //                }
-                return false;
             },
             initialize: function() {
                 this.scale.x = 1;

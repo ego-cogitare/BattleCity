@@ -101,7 +101,21 @@ window.onload = function() {
                     Math.round(mapSize.width * _tailWidth * Math.random()),
                     Math.round(mapSize.height * _tailHeight * Math.random())
                 );
-                Game.instance.addModel(powerUp);
+                this.addModel(powerUp);
+            },
+            getTanksByModel: function(model) {
+                return _.filter(this.getChildrenByType(['tank']), function(children) {
+                    return children.model === model;
+                });
+            },
+            getTankById: function(id) {
+                var tank = _.filter(this.getChildrenByType(['tank']), function(children) {
+                    return children.id === id;
+                });
+                return tank.length > 0 ? tank[0] : null;
+            },
+            addBot: function(model) {
+                this.addModel(new Tank(model));
             }
         };
 
@@ -114,6 +128,8 @@ window.onload = function() {
             getMap: GameLoop.getMap,
             getMapSize: GameLoop.getMapSize,
             getChildren: GameLoop.getChildren,
+            getTanksByModel: GameLoop.getTanksByModel,
+            getTankById: GameLoop.getTankById,
             getChildrenByType: GameLoop.getChildrenByType,
             getMapCellAt: GameLoop.getMapCellAt,
             getTime: GameLoop.getTime,
@@ -121,7 +137,8 @@ window.onload = function() {
             input: _keyboard,
             removeModel: GameLoop.removeModel,
             zIndexReorder: GameLoop.zIndexReorder,
-            throwPowerUp: GameLoop.throwPowerUp
+            throwPowerUp: GameLoop.throwPowerUp,
+            addBot: GameLoop.addBot
         };
     });
 
@@ -143,17 +160,12 @@ window.onload = function() {
             /* Game instance create */
             Game.instance = new BattleCity();
 
-            /* First players initialization */
-            for (var i = 0; i < Game.players.length; i++) {
-                /* Create player instance */
-                Game.players[i].instance = new Tank(i);
-
-                /* Add player to scene */
-                Game.instance.addModel(Game.players[i].instance);
-            }
+            /* Add player to scene */
+            Game.instance.addModel(new Tank(Game.types.tankModels.player1));
+            Game.instance.addModel(new Tank(Game.types.tankModels.player2));
 
             /* Player 1 input handling */
-            Game.players[0].instance.handleInput = function() {
+            Game.instance.getTanksByModel(Game.types.tankModels.player1)[0].handleInput = function() {
                 if (Game.instance.input.keys.left) {
                     this.moveLeft();
                 }
@@ -172,7 +184,7 @@ window.onload = function() {
             };
 
             /* Player 2 input handling */
-            Game.players[1].instance.handleInput = function() {
+            Game.instance.getTanksByModel(Game.types.tankModels.player2)[0].handleInput = function() {
                 if (Game.instance.input.keys.num4) {
                     this.moveLeft();
                 }

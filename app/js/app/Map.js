@@ -24,7 +24,7 @@ var Map = function(map) {
             var mapSize = Game.instance.getMapSize();
             
             // Check map bounds
-            if (cellX < 0 || cellY < 0 || cellX >= mapSize.width || cellY > mapSize.height) {
+            if (cellX < 0 || cellY < 0 || cellX >= mapSize.width || cellY >= mapSize.height) {
                 return false;
             }
             var map = Game.instance.getMap();

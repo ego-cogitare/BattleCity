@@ -47,7 +47,7 @@ var Shell = function() {
             pivot: new PIXI.Point(_tailWidth / 2, _tailHeight / 2),
             state: Game.types.shellStates.ready,
             visible: false,
-            ownerId: null,
+            owner: null,
             collideWith: [
                 Game.types.mapTails.brick, 
                 Game.types.mapTails.rightBrick, 
@@ -73,11 +73,11 @@ var Shell = function() {
             setSpeed: function(speed) {
                 this._speed = speed;
             },
-            setOwner: function(ownerId) {
-                this.ownerId = ownerId;
+            setOwner: function(owner) {
+                this.owner = owner;
             },
             getOwner: function() {
-                return this.ownerId;
+                return this.owner;
             },
             setState: function(state) {
                 this.state = state;
@@ -183,33 +183,35 @@ var Shell = function() {
                 );
         
                 if (colided || colided_x || colided_y) {
+                    var collisionPoints = [{
+                        x: mapCoords.x,
+                        y: mapCoords.y
+                    }];
+                    
                     switch (this._dirrection) {
                         case Game.types.tankDirrections.top: case Game.types.tankDirrections.bottom: 
-                            window.map.replaceCell(mapCoords.x, mapCoords.y, 0);
-                            window.map.replaceCell(mapCoords.x - 1, mapCoords.y, 0);
+                            collisionPoints.push({
+                                x: mapCoords.x - 1,
+                                y: mapCoords.y
+                            });
                         break;
                         
                         case Game.types.tankDirrections.left: case Game.types.tankDirrections.right: 
-                            window.map.replaceCell(mapCoords.x, mapCoords.y, 0);
-                            window.map.replaceCell(mapCoords.x, mapCoords.y - 1, 0);
+                            collisionPoints.push({
+                                x: mapCoords.x,
+                                y: mapCoords.y - 1
+                            });
                         break;
                     } 
+                    
+                    _.each(collisionPoints, function(point) {
+                        if (this.getOwner().isCanDestroy(Game.instance.getMapCellAt(point.x, point.y))) {
+                            window.map.replaceCell(point.x, point.y, 0);
+                        }
+                    }, this);
                 }
                 
                 return ((colided || colided_x) && this._speedX === 0) || ((colided || colided_y) && this._speedY === 0);
-                
-//                for (var i = 0; i < children.length; i++) {
-//                    if (children[i].id === 1 &&
-//                        Utils.rectIntersect(
-//                            this.getShape()[0], 
-//                            this.getShape()[1],
-//                            children[i].getShape()[0],
-//                            children[i].getShape()[1]
-//                        )) 
-//                    {
-//                        return children[i];
-//                    } 
-//                }
             },
             initialize: function() {
                 this.scale.x = 1;

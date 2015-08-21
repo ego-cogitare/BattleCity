@@ -1,16 +1,21 @@
-var Tank = function(ID) {
+var Tank = function(model) {
 
     var _tailWidth = Game.config.tailSize.width;
     var _tailHeight = Game.config.tailSize.height;
     var _tailRegion = {};
+    var ID = new Date().getTime().toString();
     
-    switch (ID) {
-        case 0:
+    switch (model) {
+        case Game.types.tankModels.player1:
             _tailRegion = { x: 0, y: 0, width: _tailWidth * 4, height: _tailHeight * 8 };
         break;
         
-        case 1:
-            _tailRegion = { x: 0, y: _tailHeight * 16, width: _tailWidth * 4, height: _tailHeight * 8 };
+        case Game.types.tankModels.player2:
+            _tailRegion = { x: 0, y: _tailHeight * 16, width: _tailWidth * 2 + 1, height: _tailHeight * 8 };
+        break;
+        
+        default:
+            _tailRegion = { x: _tailWidth * 16, y: _tailHeight * (model - 2) * 2, width: _tailWidth * 4, height: _tailHeight * 2 };
         break;
     }
     
@@ -40,7 +45,7 @@ var Tank = function(ID) {
         ], 
         60, 
         function() {
-            Game.players[ID].instance.reset();
+            Game.instance.getTankById(ID).reset();
         })
     };
     
@@ -48,7 +53,8 @@ var Tank = function(ID) {
         new PIXI.Sprite(), 
         {
             id: ID,
-            type: 'player',
+            type: 'tank',
+            model: model,
             bodyType: 0,
             zIndex: 1,
             speed: 2,
@@ -57,8 +63,8 @@ var Tank = function(ID) {
             dirrection: Game.types.tankDirrections.top,
             curentState: Game.types.tankStates.stop,
             holder: [],
-            holderSize: Game.players[ID].holderSize,
-            cooldownTime: Game.players[ID].cooldownTime,
+            holderSize: Game.modelParams[model].holderSize,
+            cooldownTime: Game.modelParams[model].cooldownTime,
             lastShootTime: 0,
             pivot: new PIXI.Point(_tailWidth, _tailHeight),
             canMoveOn: [
@@ -66,14 +72,39 @@ var Tank = function(ID) {
                 Game.types.mapTails.tree, 
                 Game.types.mapTails.swamp
             ],
+            canDestroy: [
+                Game.types.mapTails.brick, 
+                Game.types.mapTails.rightBrick, 
+                Game.types.mapTails.bottomBrick,
+                Game.types.mapTails.leftBrick,
+                Game.types.mapTails.topBrick,
+                Game.types.mapTails.flagAliveTopLeft,
+                Game.types.mapTails.flagAliveTopRight,
+                Game.types.mapTails.flagAliveBottomLeft,
+                Game.types.mapTails.flagAliveBottomRight
+            ],
             powerUps: [],
 
+            isHuman: function() {
+                return Utils.inArray(this.model, [Game.types.tankModels.player1, Game.types.tankModels.player2]);
+            },
+            isBot: function() {
+                return !this.isHuman();
+            },
+            isCanDestroy: function(tailType) {
+                return Utils.inArray(tailType, this.canDestroy);
+            },
+            improveDestroyAbility: function(tailType) {
+                if (typeof Game.types.mapTails[tailType] !== 'undefined') {
+                    this.canDestroy.push(tailType);
+                }
+            },
             getBodyType: function() {
                 return this.bodyType;
             },
             setBodyType: function(level) {
                 this.bodyType = level;
-
+                
                 _.extend(
                     _animations, 
                     {
@@ -151,7 +182,7 @@ var Tank = function(ID) {
                     
                     case Game.types.powerUps.gun.id: 
                         this.holder[0].setSpeed(15);
-                        for (var i = this.getBodyType() + 1; i <= 3; i++) {
+                        for (var i = this.holderSize; i < 3; i++) {
                             this.increaseHolder().setSpeed(15);
                         }
                         this.setBodyType(3);
@@ -173,8 +204,10 @@ var Tank = function(ID) {
                 }, this);
             },
             render: function() {
-                this.setSpeedX(0);
-                this.setSpeedY(0);
+                if (this.isHuman()) {
+                    this.setSpeedX(0);
+                    this.setSpeedY(0);
+                }
 
                 /* Process user input */
                 this.handleInput();
@@ -254,10 +287,10 @@ var Tank = function(ID) {
                 ];
             },
             collisionDetected: function() {
-                var children = Game.instance.getChildrenByType(['player','powerUp']);
+                var children = Game.instance.getChildrenByType([this.type, 'powerUp']);
                 
                 for (var i = 0; i < children.length; i++) {
-                    if ((children[i].getId() !== this.getId() || children[i].type !== this.type) &&
+                    if ((children[i].getId() !== this.id || children[i].type !== this.type) &&
                         Utils.rectIntersect(
                             this.getShape()[0], 
                             this.getShape()[1],
@@ -313,7 +346,7 @@ var Tank = function(ID) {
             },
             increaseHolder: function() {
                 this.holder.push(new Shell());
-                this.holder[this.holder.length - 1].setOwner(this.id);
+                this.holder[this.holder.length - 1].setOwner(this);
                 Game.instance.addModel(this.holder[this.holder.length - 1]);
                 return this.holder[this.holderSize++];
             },
@@ -422,10 +455,10 @@ var Tank = function(ID) {
                 
                 // Initialize holder
                 this.holder = [];
-                this.holderSize = Game.players[this.id].holderSize;
+                this.holderSize = Game.modelParams[this.model].holderSize;
                 for (var i = 0; i < this.holderSize; i++) {
                     this.holder.push(new Shell());
-                    this.holder[i].setOwner(this.id);
+                    this.holder[i].setOwner(this);
                     Game.instance.addModel(this.holder[i]);
                 }
                 
@@ -436,9 +469,9 @@ var Tank = function(ID) {
                 this.setDirrection(Game.types.tankDirrections.top);
                 
                 // Player speed / scale etc
-                this.setScale(Game.players[this.id].scale);
-                this.setSpeed(Game.players[this.id].speed);
-                this.setXY(Game.players[this.id].initX, Game.players[this.id].initY);
+                this.setScale(Game.modelParams[this.model].scale);
+                this.setSpeed(Game.modelParams[this.model].speed);
+                this.setXY(Game.modelParams[this.model].initX, Game.modelParams[this.model].initY);
             },
 
             initialize: function() {
@@ -446,7 +479,7 @@ var Tank = function(ID) {
                 this.reset();
                 
                 // If player type equals to bot
-                if (this.getId() === 1) {
+                if (this.isBot()) {
                     _.extend(this, new AI());
                 }
 

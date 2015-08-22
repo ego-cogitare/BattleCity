@@ -203,7 +203,7 @@ window.onload = function() {
             };
             
             Game.instance.throwPowerUp();
-            
+            Game.instance.addBot(2);
             window.map = new Map(Game.instance.currentLevel);
         }
     );

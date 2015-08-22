@@ -32,6 +32,107 @@ Game = {
             blinkT7: 16,
             blinkT8: 17
         },
+        modelParams: [
+            // Player 1
+            {
+                holderSize: 1,
+                cooldownTime: 100,
+                scale: 1,
+                speed: 4.0,
+                initX: 300,
+                initY: 800
+            },
+
+            // Player 2
+            {
+                holderSize: 1,
+                cooldownTime: 100,
+                scale: 1,
+                speed: 4.0,
+                initX: 532,
+                initY: 800
+            },
+
+            // T1
+            {
+                holderSize: 1,
+                cooldownTime: 100,
+                scale: 1,
+                speed: 4.0,
+                initX: 300,
+                initY: 100
+            },
+
+            //T2
+            {
+                holderSize: 1,
+                cooldownTime: 100,
+                scale: 1,
+                speed: 4.0,
+                initX: 532,
+                initY: 100
+            },
+
+            // T3
+            {
+                holderSize: 1,
+                cooldownTime: 100,
+                scale: 1,
+                speed: 4.0,
+                initX: 532,
+                initY: 100
+            },
+
+            // T4
+            {
+                holderSize: 1,
+                cooldownTime: 100,
+                scale: 1,
+                speed: 4.0,
+                initX: 532,
+                initY: 100
+            },
+
+            //T5
+            {
+                holderSize: 1,
+                cooldownTime: 100,
+                scale: 1,
+                speed: 4.0,
+                initX: 532,
+                initY: 100
+            },
+
+            //T6
+            {
+                holderSize: 1,
+                cooldownTime: 100,
+                scale: 1,
+                speed: 4.0,
+                initX: 532,
+                initY: 100
+            },
+
+            //T7
+            {
+                holderSize: 1,
+                cooldownTime: 100,
+                scale: 1,
+                speed: 4.0,
+                initX: 532,
+                initY: 100
+            },
+
+            //T8
+            {
+                holderSize: 1,
+                cooldownTime: 100,
+                scale: 1,
+                speed: 4.0,
+                initX: 532,
+                initY: 100
+            }
+        ],
         shellStates: {
             ready: 'ready',
             flying: 'flying',
@@ -92,107 +193,6 @@ Game = {
             }
         }
     },
-    modelParams: [
-        // Player 1
-        {
-            holderSize: 1,
-            cooldownTime: 100,
-            scale: 1,
-            speed: 4.0,
-            initX: 300,
-            initY: 800
-        },
-        
-        // Player 2
-        {
-            holderSize: 1,
-            cooldownTime: 100,
-            scale: 1,
-            speed: 4.0,
-            initX: 532,
-            initY: 800
-        },
-        
-        // T1
-        {
-            holderSize: 1,
-            cooldownTime: 100,
-            scale: 1,
-            speed: 4.0,
-            initX: 532,
-            initY: 100
-        },
-        
-        //T2
-        {
-            holderSize: 1,
-            cooldownTime: 100,
-            scale: 1,
-            speed: 4.0,
-            initX: 532,
-            initY: 100
-        },
-        
-        // T3
-        {
-            holderSize: 1,
-            cooldownTime: 100,
-            scale: 1,
-            speed: 4.0,
-            initX: 532,
-            initY: 100
-        },
-        
-        // T4
-        {
-            holderSize: 1,
-            cooldownTime: 100,
-            scale: 1,
-            speed: 4.0,
-            initX: 532,
-            initY: 100
-        },
-        
-        //T5
-        {
-            holderSize: 1,
-            cooldownTime: 100,
-            scale: 1,
-            speed: 4.0,
-            initX: 532,
-            initY: 100
-        },
-        
-        //T6
-        {
-            holderSize: 1,
-            cooldownTime: 100,
-            scale: 1,
-            speed: 4.0,
-            initX: 532,
-            initY: 100
-        },
-        
-        //T7
-        {
-            holderSize: 1,
-            cooldownTime: 100,
-            scale: 1,
-            speed: 4.0,
-            initX: 532,
-            initY: 100
-        },
-        
-        //T8
-        {
-            holderSize: 1,
-            cooldownTime: 100,
-            scale: 1,
-            speed: 4.0,
-            initX: 532,
-            initY: 100
-        }
-    ],
     config: {
         assets: {
             Atlas: 'app/asset/textures/atlas4x.png',

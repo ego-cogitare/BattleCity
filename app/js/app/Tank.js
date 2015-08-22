@@ -63,8 +63,8 @@ var Tank = function(model) {
             dirrection: Game.types.tankDirrections.top,
             curentState: Game.types.tankStates.stop,
             holder: [],
-            holderSize: Game.modelParams[model].holderSize,
-            cooldownTime: Game.modelParams[model].cooldownTime,
+            holderSize: Game.types.modelParams[model].holderSize,
+            cooldownTime: Game.types.modelParams[model].cooldownTime,
             lastShootTime: 0,
             pivot: new PIXI.Point(_tailWidth, _tailHeight),
             canMoveOn: [
@@ -73,6 +73,7 @@ var Tank = function(model) {
                 Game.types.mapTails.swamp
             ],
             canDestroy: [
+                Game.types.mapTails.concrete, 
                 Game.types.mapTails.brick, 
                 Game.types.mapTails.rightBrick, 
                 Game.types.mapTails.bottomBrick,
@@ -455,7 +456,7 @@ var Tank = function(model) {
                 
                 // Initialize holder
                 this.holder = [];
-                this.holderSize = Game.modelParams[this.model].holderSize;
+                this.holderSize = Game.types.modelParams[this.model].holderSize;
                 for (var i = 0; i < this.holderSize; i++) {
                     this.holder.push(new Shell());
                     this.holder[i].setOwner(this);
@@ -469,9 +470,9 @@ var Tank = function(model) {
                 this.setDirrection(Game.types.tankDirrections.top);
                 
                 // Player speed / scale etc
-                this.setScale(Game.modelParams[this.model].scale);
-                this.setSpeed(Game.modelParams[this.model].speed);
-                this.setXY(Game.modelParams[this.model].initX, Game.modelParams[this.model].initY);
+                this.setScale(Game.types.modelParams[this.model].scale);
+                this.setSpeed(Game.types.modelParams[this.model].speed);
+                this.setXY(Game.types.modelParams[this.model].initX, Game.types.modelParams[this.model].initY);
             },
 
             initialize: function() {

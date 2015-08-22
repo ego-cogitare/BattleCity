@@ -21,7 +21,7 @@ var Shell = function() {
             [ 
                 new PIXI.Texture(
                     Loader.resources.Atlas.texture,
-                    { x: 1288, y: 72, width: _tailWidth, height: _tailHeight }
+                    { x: 1283, y: 80, width: 32, height: 32 }
                 )
             ], 
             999
@@ -60,7 +60,9 @@ var Shell = function() {
                 Game.types.mapTails.flagAliveBottomLeft,
                 Game.types.mapTails.flagAliveBottomRight
             ],
-
+            getId: function() {
+                return this.id;
+            },
             setDirrection: function(dirrection) {
                 if (typeof Game.types.tankDirrections[dirrection] !== 'undefined') {
                     this._dirrection = dirrection;
@@ -146,12 +148,12 @@ var Shell = function() {
             getShape: function() {
                 return [
                     {
-                        x: this.position.x - _tailWidth + this.speedX,
-                        y: this.position.y - _tailHeight + this.speedY
+                        x: this.position.x - 8,
+                        y: this.position.y - 8
                     },
                     {
-                        x: this.position.x + _tailWidth + this.speedX,
-                        y: this.position.y + _tailHeight + this.speedY
+                        x: this.position.x + 8,
+                        y: this.position.y + 8
                     }
                 ];
             },
@@ -209,6 +211,34 @@ var Shell = function() {
                             window.map.replaceCell(point.x, point.y, 0);
                         }
                     }, this);
+                }
+                // Check for collisions with tanks
+                else 
+                {
+                    var children = Game.instance.getChildrenByType([this.type, 'tank']);
+                
+                    for (var i = 0; i < children.length; i++) {
+                        if ((children[i].getId() !== this.id || children[i].type !== this.type) &&
+                            Utils.rectIntersect(
+                                this.getShape()[0], 
+                                this.getShape()[1],
+                                children[i].getShape()[0],
+                                children[i].getShape()[1]
+                            )) 
+                        {
+                            if (children[i].type === 'shell' && 
+                                children[i].getState() === Game.types.shellStates.flying &&
+                                children[i].getOwner() !== this.getOwner()) 
+                            {
+                                children[i].reset();
+                                this.reset();
+                            }
+                            else if (children[i].type === 'tank' && this.getOwner().getId() !== children[i].getId()) {
+                                this.reset();
+                                children[i].die();
+                            }
+                        } 
+                    }
                 }
                 
                 return ((colided || colided_x) && this._speedX === 0) || ((colided || colided_y) && this._speedY === 0);

@@ -3,7 +3,7 @@ var Tank = function(model) {
     var _tailWidth = Game.config.tailSize.width;
     var _tailHeight = Game.config.tailSize.height;
     var _tailRegion = {};
-    var ID = new Date().getTime().toString();
+    var ID = Game.instance.getTime() + Game.instance.getChildrenByType(['tank']).length;
     
     switch (model) {
         case Game.types.tankModels.player1:
@@ -33,25 +33,17 @@ var Tank = function(model) {
         )
     ).explode(_tailWidth * 4, _tailHeight * 4);
     
-    var _animations = {
-        explosion: new Animation([ 
-            _explosion[0][0], 
-            _explosion[0][1],
-            _explosion[0][2],
-            _explosion[1][0],
-            _explosion[1][1],
-            _explosion[1][0],
-            _explosion[0][2]
-        ], 
-        60, 
-        function() {
-            Game.instance.getTankById(ID).reset();
-        })
-    };
+    var _appearing = new TextureExploder(
+        new PIXI.Texture(
+            Loader.resources.Atlas.texture,
+            { x: _tailWidth * 32, y: 2 * _tailHeight, width: _tailWidth * 8, height: _tailHeight * 2 }
+        )
+    ).explode(_tailWidth * 2, _tailHeight * 2);
     
     return _.extend(
         new PIXI.Sprite(), 
         {
+            _animations: {},
             id: ID,
             type: 'tank',
             model: model,
@@ -61,7 +53,7 @@ var Tank = function(model) {
             speedX: 0,
             speedY: 0,
             dirrection: Game.types.tankDirrections.top,
-            curentState: Game.types.tankStates.stop,
+            curentState: Game.types.tankStates.appearing,
             holder: [],
             holderSize: Game.types.modelParams[model].holderSize,
             cooldownTime: Game.types.modelParams[model].cooldownTime,
@@ -72,18 +64,8 @@ var Tank = function(model) {
                 Game.types.mapTails.tree, 
                 Game.types.mapTails.swamp
             ],
-            canDestroy: [
-                Game.types.mapTails.concrete, 
-                Game.types.mapTails.brick, 
-                Game.types.mapTails.rightBrick, 
-                Game.types.mapTails.bottomBrick,
-                Game.types.mapTails.leftBrick,
-                Game.types.mapTails.topBrick,
-                Game.types.mapTails.flagAliveTopLeft,
-                Game.types.mapTails.flagAliveTopRight,
-                Game.types.mapTails.flagAliveBottomLeft,
-                Game.types.mapTails.flagAliveBottomRight
-            ],
+            canDestroy: [],
+            canNotDestroy: Game.types.modelParams[model].canNotDestroy,
             powerUps: [],
 
             isHuman: function() {
@@ -95,10 +77,16 @@ var Tank = function(model) {
             isCanDestroy: function(tailType) {
                 return Utils.inArray(tailType, this.canDestroy);
             },
-            improveDestroyAbility: function(tailType) {
-                if (typeof Game.types.mapTails[tailType] !== 'undefined') {
-                    this.canDestroy.push(tailType);
+            worseDestroyAbility: function(tailType) {
+                for (var i = 0; i < this.canDestroy.length; i++) {
+                    if (this.canDestroy[i] === tailType) {
+                        delete this.canDestroy[i];
+                        break;
+                    }
                 }
+            },
+            improveDestroyAbility: function(tailType) {
+                this.canDestroy.push(tailType);
             },
             getBodyType: function() {
                 return this.bodyType;
@@ -107,7 +95,7 @@ var Tank = function(model) {
                 this.bodyType = level;
                 
                 _.extend(
-                    _animations, 
+                    this._animations, 
                     {
                         stop: new Animation([ 
                             _frames[this.bodyType][0]
@@ -127,12 +115,6 @@ var Tank = function(model) {
             worsenBodyType: function() {
                 this.setBodyType(--this.bodyType);
                 return this.bodyType;
-            },
-            die: function() {
-                this.clearPowerUps();
-                this.updateZIndex(5);
-                this.setState(Game.types.tankStates.explosion);
-                _animations.explosion.reset();
             },
             updateState: function() {
                 /* If speed not zero - model is in a move state */
@@ -174,6 +156,7 @@ var Tank = function(model) {
                                 break;
                                 case 2: 
                                     this.increaseHolder().setSpeed(15);
+                                    this.improveDestroyAbility(Game.types.mapTails.concrete);
                                 break;
                             }
                             this.improveBodyType();
@@ -187,6 +170,7 @@ var Tank = function(model) {
                             this.increaseHolder().setSpeed(15);
                         }
                         this.setBodyType(3);
+                        this.improveDestroyAbility(Game.types.mapTails.concrete);
                     break;
                 }
                 
@@ -204,6 +188,16 @@ var Tank = function(model) {
                     }
                 }, this);
             },
+            powerUpExists: function(powerUpType) {
+                var powerUpIndex = -1;
+                _.each(this.powerUps, function(powerUp, index) {
+                    if (powerUp.getId() === powerUpType) {
+                        powerUpIndex = index;
+                    }
+                }, this);
+                
+                return powerUpIndex;
+            },
             render: function() {
                 if (this.isHuman()) {
                     this.setSpeedX(0);
@@ -216,7 +210,7 @@ var Tank = function(model) {
                 /* Check model state */
                 this.updateState();
 
-                this.texture = _animations[this.curentState].getFrame(Game.instance.getTimeDelta());
+                this.texture = this._animations[this.curentState].getFrame(Game.instance.getTimeDelta());
 
                 // Absolute position to map position
                 var mapPosition = this.mapCoords();
@@ -334,12 +328,14 @@ var Tank = function(model) {
                 return this.holderSize.length;
             },
             shot: function() {
-                for (var i = 0; i < this.holder.length; i++) {
-                    if (this.holder[i].getState() === Game.types.shellStates.ready && Game.instance.getTime() - this.lastShootTime >= this.cooldownTime) {
-                        this.holder[i].setDirrection(this.dirrection);
-                        this.holder[i].setPosition(this.position.x, this.position.y);
-                        this.holder[i].shot();
-                        this.lastShootTime = Game.instance.getTime();
+                if (this.canShot()) {
+                    for (var i = 0; i < this.holder.length; i++) {
+                        if (this.holder[i].getState() === Game.types.shellStates.ready && Game.instance.getTime() - this.lastShootTime >= this.cooldownTime) {
+                            this.holder[i].setDirrection(this.dirrection);
+                            this.holder[i].setPosition(this.position.x, this.position.y);
+                            this.holder[i].shot();
+                            this.lastShootTime = Game.instance.getTime();
+                        }
                     }
                 }
             },
@@ -411,6 +407,33 @@ var Tank = function(model) {
             canMove: function() {
                 return Utils.inArray(this.curentState, [Game.types.tankStates.stop, Game.types.tankStates.move]);
             },
+            canShot: function() {
+                return this.canMove();
+            },
+            canDie: function() {
+                return (this.canMove() && this.powerUpExists(Game.types.powerUps.protectiveField.id) === -1);
+            },
+            moveForward: function() {
+                if (this.canMove()) {
+                    switch (this.dirrection) {
+                        case Game.types.tankDirrections.top:
+                            this.setSpeedY(-this.getSpeed());
+                        break;
+                        
+                        case Game.types.tankDirrections.right:
+                            this.setSpeedX(this.getSpeed());
+                        break;
+                        
+                        case Game.types.tankDirrections.bottom:
+                            this.setSpeedY(this.getSpeed());
+                        break;
+                        
+                        case Game.types.tankDirrections.left:
+                            this.setSpeedX(-this.getSpeed());
+                        break;
+                    }
+                }
+            },
             moveUp: function() {
                 if (this.canMove()) {
                     this.setDirrection(Game.types.tankDirrections.top);
@@ -446,6 +469,21 @@ var Tank = function(model) {
                 }
                 this.powerUps = [];
             },
+            
+            appeare: function() {
+                // Reset animation
+                this._animations.appearing.reset();
+                
+                // Set tank state to appearing
+                this.setState(Game.types.tankStates.appearing);
+                
+                // Default dirrection
+                this.setDirrection(Game.types.tankDirrections.top);
+                
+                // Player speed / scale etc
+                this.setXY(Game.types.modelParams[this.model].initX, Game.types.modelParams[this.model].initY);
+            },
+            
             reset: function() {
                 this.setState(Game.types.tankStates.stop);
                 
@@ -459,25 +497,99 @@ var Tank = function(model) {
                 this.holderSize = Game.types.modelParams[this.model].holderSize;
                 for (var i = 0; i < this.holderSize; i++) {
                     this.holder.push(new Shell());
-                    this.holder[i].setOwner(this);
+                    this.holder[i].setOwner(this).setSpeed(Game.types.modelParams[this.model].shellSpeed);
                     Game.instance.addModel(this.holder[i]);
+                }
+                
+                // Tank can't break concrete walls as default
+                for (var i = 0; i < this.canNotDestroy.length; i++) {
+                    this.worseDestroyAbility(this.canNotDestroy[i]);
                 }
                 
                 // Default body type
                 this.setBodyType(0);
                 
-                // Default dirrection
-                this.setDirrection(Game.types.tankDirrections.top);
-                
-                // Player speed / scale etc
-                this.setScale(Game.types.modelParams[this.model].scale);
+                // Model speed init
                 this.setSpeed(Game.types.modelParams[this.model].speed);
-                this.setXY(Game.types.modelParams[this.model].initX, Game.types.modelParams[this.model].initY);
+            },
+            shellHit: function() {
+                if (this.canDie()) {
+                    this.die();
+                }
+            },
+            die: function() {
+                this.clearPowerUps();
+                this.updateZIndex(5);
+                this.setState(Game.types.tankStates.explosion);
+                this._animations.explosion.reset();
+            },
+            // Reinitialization tank model depends on model type
+            finalize: function() {
+                if (this.isHuman()) {
+                    this.appeare();
+                }
+                else {
+                    Game.instance.removeModel(this);
+                    delete this;
+                }
             },
 
             initialize: function() {
+                var self = this;
+                
+                this._animations = {
+                    explosion: new Animation(
+                        [ 
+                            _explosion[0][0], 
+                            _explosion[0][1],
+                            _explosion[0][2],
+                            _explosion[1][0],
+                            _explosion[1][1],
+                            _explosion[1][0],
+                            _explosion[0][2]
+                        ], 
+                        60, 
+                        function() {
+                            self.finalize();
+                        }
+                    ),
+                    appearing: new Animation(
+                        [
+                            _appearing[0][0], 
+                            _appearing[0][1], 
+                            _appearing[0][2], 
+                            _appearing[0][3], 
+                            _appearing[0][2], 
+                            _appearing[0][1], 
+                            _appearing[0][0], 
+                            _appearing[0][1], 
+                            _appearing[0][2], 
+                            _appearing[0][3], 
+                            _appearing[0][2], 
+                            _appearing[0][1], 
+                            _appearing[0][0], 
+                            _appearing[0][1], 
+                            _appearing[0][2], 
+                            _appearing[0][3], 
+                            _appearing[0][2], 
+                            _appearing[0][1],
+                            _appearing[0][0]
+                        ], 
+                        70, 
+                        function() {
+                            self.reset();
+                        }
+                    )
+                };
+                
+                for (var i = 0; i < Game.instance.collidableTiles.length; i++) {
+                    if (!Utils.inArray(Game.instance.collidableTiles[i], this.canNotDestroy)) {
+                        this.improveDestroyAbility(Game.instance.collidableTiles[i]);
+                    }
+                }
+                
                 // Initialize tank body type
-                this.reset();
+                this.appeare();
                 
                 // If player type equals to bot
                 if (this.isBot()) {

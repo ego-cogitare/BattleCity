@@ -10,6 +10,7 @@ Game = {
         tankStates: { 
             stop: 'stop', 
             move: 'move',
+            appearing: 'appearing',
             explosion: 'explosion'
         },
         tankModels: {
@@ -39,6 +40,10 @@ Game = {
                 cooldownTime: 100,
                 scale: 1,
                 speed: 4.0,
+                shellSpeed: 7.0,
+                canNotDestroy: [
+                    6
+                ],
                 initX: 300,
                 initY: 800
             },
@@ -48,7 +53,11 @@ Game = {
                 holderSize: 1,
                 cooldownTime: 100,
                 scale: 1,
-                speed: 4.0,
+                speed: 3.0,
+                shellSpeed: 7.0,
+                canNotDestroy: [
+                    6
+                ],
                 initX: 532,
                 initY: 800
             },
@@ -58,9 +67,13 @@ Game = {
                 holderSize: 1,
                 cooldownTime: 100,
                 scale: 1,
-                speed: 4.0,
-                initX: 300,
-                initY: 100
+                speed: 2.0,
+                shellSpeed: 7.0,
+                canNotDestroy: [
+                    6
+                ],
+                initX: 200,
+                initY: 30
             },
 
             //T2
@@ -68,29 +81,39 @@ Game = {
                 holderSize: 1,
                 cooldownTime: 100,
                 scale: 1,
-                speed: 4.0,
-                initX: 532,
-                initY: 100
+                speed: 2.5,
+                shellSpeed: 15.0,
+                canNotDestroy: [
+                    6
+                ],
+                initX: 300,
+                initY: 30
             },
 
             // T3
             {
-                holderSize: 1,
+                holderSize: 2,
                 cooldownTime: 100,
                 scale: 1,
-                speed: 4.0,
-                initX: 532,
-                initY: 100
+                speed: 3.0,
+                shellSpeed: 15.0,
+                canNotDestroy: [
+                    6
+                ],
+                initX: 400,
+                initY: 30
             },
 
             // T4
             {
-                holderSize: 1,
+                holderSize: 3,
                 cooldownTime: 100,
                 scale: 1,
                 speed: 4.0,
-                initX: 532,
-                initY: 100
+                shellSpeed: 15.0,
+                canNotDestroy: [],
+                initX: 500,
+                initY: 30
             },
 
             //T5
@@ -98,9 +121,13 @@ Game = {
                 holderSize: 1,
                 cooldownTime: 100,
                 scale: 1,
-                speed: 4.0,
-                initX: 532,
-                initY: 100
+                speed: 2.5,
+                shellSpeed: 12.0,
+                canNotDestroy: [
+                    6
+                ],
+                initX: 600,
+                initY: 30
             },
 
             //T6
@@ -108,29 +135,39 @@ Game = {
                 holderSize: 1,
                 cooldownTime: 100,
                 scale: 1,
-                speed: 4.0,
-                initX: 532,
-                initY: 100
+                speed: 6.0,
+                shellSpeed: 11.0,
+                canNotDestroy: [
+                    6
+                ],
+                initX: 700,
+                initY: 30
             },
 
             //T7
             {
-                holderSize: 1,
+                holderSize: 2,
                 cooldownTime: 100,
                 scale: 1,
-                speed: 4.0,
-                initX: 532,
-                initY: 100
+                speed: 2.0,
+                shellSpeed: 15.0,
+                canNotDestroy: [
+                    6
+                ],
+                initX: 800,
+                initY: 30
             },
 
             //T8
             {
-                holderSize: 1,
+                holderSize: 2,
                 cooldownTime: 100,
                 scale: 1,
-                speed: 4.0,
-                initX: 532,
-                initY: 100
+                speed: 1.5,
+                shellSpeed: 20.0,
+                canNotDestroy: [],
+                initX: 35,
+                initY: 30
             }
         ],
         shellStates: {

@@ -11,6 +11,19 @@ window.onload = function() {
         var GameLoop = {
             currentLevel: 0,
             
+            collidableTiles: [
+                Game.types.mapTails.concrete, 
+                Game.types.mapTails.brick, 
+                Game.types.mapTails.rightBrick, 
+                Game.types.mapTails.bottomBrick,
+                Game.types.mapTails.leftBrick,
+                Game.types.mapTails.topBrick,
+                Game.types.mapTails.flagAliveTopLeft,
+                Game.types.mapTails.flagAliveTopRight,
+                Game.types.mapTails.flagAliveBottomLeft,
+                Game.types.mapTails.flagAliveBottomRight
+            ],
+            
             screenSizes: function() {
                 return {
                     width: this.getMap()[0].length * Game.config.tailSize.width,
@@ -115,7 +128,10 @@ window.onload = function() {
                 return tank.length > 0 ? tank[0] : null;
             },
             addBot: function(model) {
-                this.addModel(new Tank(model));
+                var tank = new Tank(model);
+                this.addModel(tank);
+                
+                return tank;
             }
         };
 
@@ -125,6 +141,7 @@ window.onload = function() {
             addModel: GameLoop.addModel,
             screenSize: GameLoop.screenSizes,
             currentLevel: GameLoop.currentLevel,
+            collidableTiles: GameLoop.collidableTiles,
             getMap: GameLoop.getMap,
             getMapSize: GameLoop.getMapSize,
             getChildren: GameLoop.getChildren,
@@ -203,7 +220,12 @@ window.onload = function() {
             };
             
             Game.instance.throwPowerUp();
-            Game.instance.addBot(2);
+            
+            for (var i = 0; i < 1; i++) {
+                for (var j = 0; j < 8; j++) {
+                    Game.instance.addBot(j + 2).setXY(j * 64 + 32, i * 128 + 32);
+                }
+            }
             window.map = new Map(Game.instance.currentLevel);
         }
     );

@@ -41,27 +41,28 @@ var Shell = function() {
             _speedY: 0,
             _dirrection: null,
 
-            id: new Date().getTime(),
+            id: Game.instance.getTime() + Game.instance.getChildrenByType(['shell']).length,
             type: 'shell',
             zIndex: 3,
             pivot: new PIXI.Point(_tailWidth / 2, _tailHeight / 2),
             state: Game.types.shellStates.ready,
             visible: false,
             owner: null,
-            collideWith: [
-                Game.types.mapTails.brick, 
-                Game.types.mapTails.rightBrick, 
-                Game.types.mapTails.bottomBrick,
-                Game.types.mapTails.leftBrick,
-                Game.types.mapTails.topBrick,
-                Game.types.mapTails.concrete,
-                Game.types.mapTails.flagAliveTopLeft,
-                Game.types.mapTails.flagAliveTopRight,
-                Game.types.mapTails.flagAliveBottomLeft,
-                Game.types.mapTails.flagAliveBottomRight
-            ],
+            collideWith: Game.instance.collidableTiles,
+            
             getId: function() {
                 return this.id;
+            },
+            addCollideableTail: function(tailType) {
+                this.collideWith.push(tailType);
+            },
+            removeCollideableTail: function(tailType) {
+                for (var i = 0; i < this.collideWith.length; i++) {
+                    if (this.collideWith[i] === tailType) {
+                        delete this.collideWith[i];
+                        break;
+                    }
+                }
             },
             setDirrection: function(dirrection) {
                 if (typeof Game.types.tankDirrections[dirrection] !== 'undefined') {
@@ -77,6 +78,7 @@ var Shell = function() {
             },
             setOwner: function(owner) {
                 this.owner = owner;
+                return this;
             },
             getOwner: function() {
                 return this.owner;
@@ -226,6 +228,7 @@ var Shell = function() {
                                 children[i].getShape()[1]
                             )) 
                         {
+                            // Shell collided with other shell
                             if (children[i].type === 'shell' && 
                                 children[i].getState() === Game.types.shellStates.flying &&
                                 children[i].getOwner() !== this.getOwner()) 
@@ -233,9 +236,17 @@ var Shell = function() {
                                 children[i].reset();
                                 this.reset();
                             }
-                            else if (children[i].type === 'tank' && this.getOwner().getId() !== children[i].getId()) {
+                            // Shell collided with tank
+                            else if (children[i].type === 'tank' && 
+                                this.getOwner().getId() !== children[i].getId() &&
+                                (
+                                    children[i].isBot() && this.getOwner().isHuman() || 
+                                    children[i].isHuman() && this.getOwner().isBot()
+                                ) 
+                            )
+                            {
                                 this.reset();
-                                children[i].die();
+                                children[i].shellHit(this);
                             }
                         } 
                     }

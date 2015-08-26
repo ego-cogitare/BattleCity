@@ -64,6 +64,9 @@ var Shell = function() {
                     }
                 }
             },
+            getDirrection: function() {
+                return this._dirrection;
+            },
             setDirrection: function(dirrection) {
                 if (typeof Game.types.tankDirrections[dirrection] !== 'undefined') {
                     this._dirrection = dirrection;
@@ -210,7 +213,7 @@ var Shell = function() {
                     
                     _.each(collisionPoints, function(point) {
                         if (this.getOwner().isCanDestroy(Game.instance.getMapCellAt(point.x, point.y))) {
-                            window.map.replaceCell(point.x, point.y, 0);
+                            window.map.replaceCell(point.x, point.y, Game.types.mapTails.empty);
                         }
                     }, this);
                 }
@@ -229,7 +232,7 @@ var Shell = function() {
                             )) 
                         {
                             // Shell collided with other shell
-                            if (children[i].type === 'shell' && 
+                            if (children[i].type === this.type && 
                                 children[i].getState() === Game.types.shellStates.flying &&
                                 children[i].getOwner() !== this.getOwner()) 
                             {

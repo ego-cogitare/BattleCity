@@ -325,7 +325,7 @@ var Tank = function(model) {
                 return this.holder;
             },
             getHolderSize: function() {
-                return this.holderSize.length;
+                return this.holderSize;
             },
             shot: function() {
                 if (this.canShot()) {

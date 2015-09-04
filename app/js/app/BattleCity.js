@@ -10,7 +10,6 @@ window.onload = function() {
 
         var GameLoop = {
             currentLevel: 0,
-            
             collidableTiles: [
                 Game.types.mapTails.concrete, 
                 Game.types.mapTails.brick, 
@@ -42,14 +41,11 @@ window.onload = function() {
                 _curUnixTime = new Date().getTime();
                 _timeDelta = _curUnixTime - _prevUnixTime;
                 _prevUnixTime = _curUnixTime;
-                for (var i = 0; i < GameLoop.stage.children.length; i++) {
-                    if (GameLoop.stage.children[i].render) {
-                        GameLoop.stage.children[i].render();
+                _.each(GameLoop.stage.children, function(child) { 
+                        try { child.render(); } catch (e) {}
+                        try { child.AIPlay(); } catch (e) {}
                     }
-                    if (GameLoop.stage.children[i].AIPlay) {
-                        GameLoop.stage.children[i].AIPlay();
-                    }
-                }
+                );
             },
             getTime: function() {
                 return new Date().getTime();
@@ -93,44 +89,32 @@ window.onload = function() {
             },
             getChildrenByType: function(types) {
                 return _.filter(GameLoop.stage.children, function(child) {
-                    return Utils.inArray(child.type, types);
+                    return _.contains(types, child.type);
                 });
             },
             getRandomPowerUp: function() {
-                var powerUps = _.filter(Game.types.powerUps, function(powerUp) {
-                    return powerUp.applyable;
-                });
-                return powerUps[Math.round((powerUps.length - 1) * Math.random())].id;
+                return _.sample(_.where(Game.types.powerUps, { applyable: true })).id;
             },
             throwPowerUp: function(powerUpType) {
-                // PowerUp position
                 var mapSize = GameLoop.getMapSize();
-                
                 if (typeof powerUpType === 'undefined') {
                     powerUpType = GameLoop.getRandomPowerUp();
                 }
-                var powerUp = new PowerUp(powerUpType);
-                powerUp.setPosition(
-                    Math.round(mapSize.width * _tailWidth * Math.random()),
-                    Math.round(mapSize.height * _tailHeight * Math.random())
+                var powerUp = new PowerUp(powerUpType).setPosition(
+                    _.random(mapSize.width * _tailWidth),
+                    _.random(mapSize.height * _tailHeight)
                 );
                 this.addModel(powerUp);
             },
             getTanksByModel: function(model) {
-                return _.filter(this.getChildrenByType(['tank']), function(children) {
-                    return children.model === model;
-                });
+                return _.where(GameLoop.stage.children, { model: model });
             },
             getTankById: function(id) {
-                var tank = _.filter(this.getChildrenByType(['tank']), function(children) {
-                    return children.id === id;
-                });
-                return tank.length > 0 ? tank[0] : null;
+                return _.findWhere(GameLoop.stage.children, { id: id });
             },
             addBot: function(model) {
                 var tank = new Tank(model);
                 this.addModel(tank);
-                
                 return tank;
             }
         };

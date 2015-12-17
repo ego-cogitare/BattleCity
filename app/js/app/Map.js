@@ -28,17 +28,22 @@ var Map = function(map) {
                 return false;
             }
             var map = Game.instance.getMap();
-            map[cellY][cellX] = cellVal;
-            _.each(this.getCell(cellX, cellY), function(tail){
-                tail.texture = this.getTail(cellVal).texture;
-            }, this);
+            map[cellY][cellX] = cellVal;            
+            this.getCell(cellX, cellY).texture = this.getTail(cellVal).texture;
             
             return this;
         },
+        addTail: function(model) {
+            Game.instance.spriteBatch().addChild(model);
+            Game.instance.zIndexReorder();
+        },
         getCell: function(cellX, cellY) {
-            return _.filter(Game.instance.getChildrenByType(['tail']), function(tail) {
+            return _.find(this.getTails(), function(tail) {
                 return tail.cellX === cellX && tail.cellY === cellY;
             });
+        },
+        getTails: function() {
+            return Game.instance.spriteBatch().children;
         },
         getTail: function(id) {
             var tailMap = [
@@ -76,7 +81,7 @@ var Map = function(map) {
                     tileSprite.position.x = j * _tailWidth;
                     tileSprite.position.y = i * _tailHeight;
                     tileSprite.render = function() {};
-                    Game.instance.addModel(
+                    this.addTail(
                         _.extend(tileSprite, {
                             type: 'tail',
                             id: tailId,

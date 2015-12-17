@@ -30,12 +30,23 @@ window.onload = function() {
                 };
             },
             initialize: function() {
-                this.renderer = new PIXI.autoDetectRenderer(this.screenSizes().width, this.screenSizes().height);
+                this.renderer = new PIXI.CanvasRenderer(this.screenSizes().width, this.screenSizes().height);
+//                this.renderer = new PIXI.WebGLRenderer(this.screenSizes().width, this.screenSizes().height);
                 document.body.appendChild(this.renderer.view);
+                this.spriteBatch = new PIXI.ParticleContainer();
                 this.stage = new PIXI.Container();
+                this.stage.addChild(this.spriteBatch);
                 requestAnimationFrame(GameLoop.animate);
+                
+                // Frame rate counter
+                GameLoop.frameRate = 0;
+                setInterval(function() { 
+                    document.getElementById('frameRate').innerHTML = 'FPS: ' + GameLoop.frameRate;
+                    GameLoop.frameRate = 0; 
+                }, 1000);
             },
             animate: function() {
+                GameLoop.frameRate++;
                 requestAnimationFrame(GameLoop.animate);
                 GameLoop.renderer.render(GameLoop.stage);
                 _curUnixTime = new Date().getTime();
@@ -46,6 +57,9 @@ window.onload = function() {
                         try { child.AIPlay(); } catch (e) {}
                     }
                 );
+            },
+            getSpriteBatch: function() {
+                return GameLoop.spriteBatch;
             },
             getTime: function() {
                 return new Date().getTime();
@@ -123,6 +137,7 @@ window.onload = function() {
 
         return  {
             addModel: GameLoop.addModel,
+            spriteBatch: GameLoop.getSpriteBatch,
             screenSize: GameLoop.screenSizes,
             currentLevel: GameLoop.currentLevel,
             collidableTiles: GameLoop.collidableTiles,
@@ -203,7 +218,7 @@ window.onload = function() {
                 }
             };
             
-            Game.instance.throwPowerUp();
+//            Game.instance.throwPowerUp();
             
             for (var i = 0; i < 1; i++) {
                 for (var j = 0; j < 8; j++) {

@@ -235,7 +235,7 @@ Game = {
             Atlas: 'app/asset/textures/atlas4x.png',
             maps: [
                 'app/asset/maps/level01.json',
-                'app/asset/maps/level01.json'
+                'app/asset/maps/level02.json'
             ]
         },
         tailSize: {

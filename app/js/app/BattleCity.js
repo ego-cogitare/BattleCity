@@ -30,7 +30,7 @@ window.onload = function() {
                 };
             },
             initialize: function() {
-                this.renderer = new PIXI.WebGLRenderer(this.screenSizes().width, this.screenSizes().height);
+                this.renderer = new PIXI.autoDetectRenderer(this.screenSizes().width, this.screenSizes().height);
                 document.body.appendChild(this.renderer.view);
                 this.stage = new PIXI.Container();
                 requestAnimationFrame(GameLoop.animate);

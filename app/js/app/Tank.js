@@ -1,23 +1,23 @@
-var Tank = function(model) {
+var Tank = function(modelName) {
 
     var _tailWidth = Game.config.tailSize.width;
     var _tailHeight = Game.config.tailSize.height;
-    var _tailRegion = {};
     var ID = Game.instance.getTime() + Game.instance.getChildrenByType(['tank']).length;
-    
-    switch (model) {
-        case Game.types.tankModels.player1:
-            _tailRegion = { x: 0, y: 0, width: _tailWidth * 4, height: _tailHeight * 8 };
-        break;
-        
-        case Game.types.tankModels.player2:
-            _tailRegion = { x: 0, y: _tailHeight * 16, width: _tailWidth * 2 + 1, height: _tailHeight * 8 };
-        break;
-        
-        default:
-            _tailRegion = { x: _tailWidth * 16, y: _tailHeight * (model - 2) * 2, width: _tailWidth * 4, height: _tailHeight * 2 };
-        break;
-    }
+    var model = Game.instance.getTankModelByName(modelName);
+    var _tailRegion = _.extend(
+        {
+            player1 : { x: 0,               y: 0,                width: _tailWidth * 4,     height: _tailHeight * 8 },
+            player2 : { x: 0,               y: _tailHeight * 16, width: _tailWidth * 2 + 1, height: _tailHeight * 8 },
+            T1      : { x: _tailWidth * 16, y: 0,                width: _tailWidth * 4,     height: _tailHeight * 2 },
+            T2      : { x: _tailWidth * 16, y: _tailHeight * 2,  width: _tailWidth * 4,     height: _tailHeight * 2 },
+            T3      : { x: _tailWidth * 16, y: _tailHeight * 4,  width: _tailWidth * 4,     height: _tailHeight * 2 },
+            T4      : { x: _tailWidth * 16, y: _tailHeight * 6,  width: _tailWidth * 4,     height: _tailHeight * 2 },
+            T5      : { x: _tailWidth * 16, y: _tailHeight * 8,  width: _tailWidth * 4,     height: _tailHeight * 2 },
+            T6      : { x: _tailWidth * 16, y: _tailHeight * 10, width: _tailWidth * 4,     height: _tailHeight * 2 },
+            T7      : { x: _tailWidth * 16, y: _tailHeight * 12, width: _tailWidth * 4,     height: _tailHeight * 2 },
+            T8      : { x: _tailWidth * 16, y: _tailHeight * 14, width: _tailWidth * 4,     height: _tailHeight * 2 }
+        }
+    )[modelName];
     
     var _frames = new TextureExploder(
         new PIXI.Texture(
@@ -55,8 +55,8 @@ var Tank = function(model) {
             dirrection: Game.types.tankDirrections.top,
             curentState: Game.types.tankStates.appearing,
             holder: [],
-            holderSize: Game.types.modelParams[model].holderSize,
-            cooldownTime: Game.types.modelParams[model].cooldownTime,
+            holderSize: model.holderSize,
+            cooldownTime: model.cooldownTime,
             lastShootTime: 0,
             pivot: new PIXI.Point(_tailWidth, _tailHeight),
             canMoveOn: [
@@ -65,11 +65,11 @@ var Tank = function(model) {
                 Game.types.mapTails.swamp
             ],
             canDestroy: [],
-            canNotDestroy: Game.types.modelParams[model].canNotDestroy,
+            canNotDestroy: model.canNotDestroy,
             powerUps: [],
 
             isHuman: function() {
-                return Utils.inArray(this.model, [Game.types.tankModels.player1, Game.types.tankModels.player2]);
+                return model.isHuman;
             },
             isBot: function() {
                 return !this.isHuman();
@@ -481,7 +481,7 @@ var Tank = function(model) {
                 this.setDirrection(Game.types.tankDirrections.top);
                 
                 // Player speed / scale etc
-                this.setXY(Game.types.modelParams[this.model].initX, Game.types.modelParams[this.model].initY);
+                this.setXY(model.initX, model.initY);
             },
             
             reset: function() {
@@ -494,10 +494,10 @@ var Tank = function(model) {
                 
                 // Initialize holder
                 this.holder = [];
-                this.holderSize = Game.types.modelParams[this.model].holderSize;
+                this.holderSize = model.holderSize;
                 for (var i = 0; i < this.holderSize; i++) {
                     this.holder.push(new Shell());
-                    this.holder[i].setOwner(this).setSpeed(Game.types.modelParams[this.model].shellSpeed);
+                    this.holder[i].setOwner(this).setSpeed(model.shellSpeed);
                     Game.instance.addModel(this.holder[i]);
                 }
                 
@@ -510,7 +510,7 @@ var Tank = function(model) {
                 this.setBodyType(0);
                 
                 // Model speed init
-                this.setSpeed(Game.types.modelParams[this.model].speed);
+                this.setSpeed(model.speed);
             },
             shellHit: function() {
                 if (this.canDie()) {

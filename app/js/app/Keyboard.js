@@ -9,7 +9,7 @@ var Keyboard = function() {
     };
     
     window.addEventListener('keydown', function(event) {
-        //console.log(event);
+        console.log(event);
         switch (event.keyCode) {
             case 37: // Left
                 _keyFlags.left = true;
@@ -45,6 +45,10 @@ var Keyboard = function() {
 
             case 101: // Down
                 _keyFlags.num5 = true;
+            break;
+            
+            case 105: // Shot
+                _keyFlags.num9 = true;
             break;
         }
     }, false);
@@ -85,6 +89,10 @@ var Keyboard = function() {
 
             case 101: // Down
                 _keyFlags.num5 = false;
+            break;
+
+            case 105: // Shot
+                _keyFlags.num9 = false;
             break;
         }
     }, false);

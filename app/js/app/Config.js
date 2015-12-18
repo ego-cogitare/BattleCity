@@ -13,29 +13,10 @@ Game = {
             appearing: 'appearing',
             explosion: 'explosion'
         },
-        tankModels: {
-            player1: 0,
-            player2: 1,
-            T1: 2,
-            T2: 3,
-            T3: 4,
-            T4: 5,
-            T5: 6,
-            T6: 7,
-            T7: 8,
-            T8: 9,
-            blinkT1: 10,
-            blinkT2: 11,
-            blinkT3: 12,
-            blinkT4: 13,
-            blinkT5: 14,
-            blinkT6: 15,
-            blinkT7: 16,
-            blinkT8: 17
-        },
-        modelParams: [
-            // Player 1
+        tankModels: [
             {
+                name: 'player1',
+                isHuman: true,
                 holderSize: 1,
                 cooldownTime: 100,
                 scale: 1,
@@ -47,9 +28,9 @@ Game = {
                 initX: 300,
                 initY: 800
             },
-
-            // Player 2
             {
+                name: 'player2',
+                isHuman: true,
                 holderSize: 1,
                 cooldownTime: 100,
                 scale: 1,
@@ -61,9 +42,9 @@ Game = {
                 initX: 532,
                 initY: 800
             },
-
-            // T1
             {
+                name: 'T1',
+                isHuman: false,
                 holderSize: 1,
                 cooldownTime: 100,
                 scale: 1,
@@ -75,9 +56,9 @@ Game = {
                 initX: 200,
                 initY: 30
             },
-
-            //T2
             {
+                name: 'T2',
+                isHuman: false,
                 holderSize: 1,
                 cooldownTime: 100,
                 scale: 1,
@@ -89,9 +70,9 @@ Game = {
                 initX: 300,
                 initY: 30
             },
-
-            // T3
             {
+                name: 'T3',
+                isHuman: false,
                 holderSize: 2,
                 cooldownTime: 100,
                 scale: 1,
@@ -103,9 +84,9 @@ Game = {
                 initX: 400,
                 initY: 30
             },
-
-            // T4
             {
+                name: 'T4',
+                isHuman: false,
                 holderSize: 3,
                 cooldownTime: 100,
                 scale: 1,
@@ -115,9 +96,9 @@ Game = {
                 initX: 500,
                 initY: 30
             },
-
-            //T5
             {
+                name: 'T5',
+                isHuman: false,
                 holderSize: 1,
                 cooldownTime: 100,
                 scale: 1,
@@ -129,9 +110,9 @@ Game = {
                 initX: 600,
                 initY: 30
             },
-
-            //T6
             {
+                name: 'T6',
+                isHuman: false,
                 holderSize: 1,
                 cooldownTime: 100,
                 scale: 1,
@@ -143,9 +124,9 @@ Game = {
                 initX: 700,
                 initY: 30
             },
-
-            //T7
             {
+                name: 'T7',
+                isHuman: false,
                 holderSize: 2,
                 cooldownTime: 100,
                 scale: 1,
@@ -157,9 +138,9 @@ Game = {
                 initX: 800,
                 initY: 30
             },
-
-            //T8
             {
+                name: 'T8',
+                isHuman: false,
                 holderSize: 2,
                 cooldownTime: 100,
                 scale: 1,

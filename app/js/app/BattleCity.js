@@ -113,11 +113,20 @@ window.onload = function() {
                 );
                 this.addModel(powerUp);
             },
-            getTanksByModel: function(model) {
-                return _.where(GameLoop.stage.children, { model: model });
+            getTanksByModelName: function(modelName) {
+                var tanks = [];
+                _.each(GameLoop.stage.children, function(childModel) {
+                    if (childModel.model.name === modelName) {
+                        tanks.push(childModel);
+                    }
+                });
+                return tanks;
             },
             getTankById: function(id) {
                 return _.findWhere(GameLoop.stage.children, { id: id });
+            },
+            getTankModelByName: function(modelName) {
+                return _.find(Game.types.tankModels, { name: modelName });
             },
             addBot: function(model) {
                 var tank = new Tank(model);
@@ -130,13 +139,14 @@ window.onload = function() {
 
         return  {
             addModel: GameLoop.addModel,
+            getTankModelByName: GameLoop.getTankModelByName,
             screenSize: GameLoop.screenSizes,
             currentLevel: GameLoop.currentLevel,
             collidableTiles: GameLoop.collidableTiles,
             getMap: GameLoop.getMap,
             getMapSize: GameLoop.getMapSize,
             getChildren: GameLoop.getChildren,
-            getTanksByModel: GameLoop.getTanksByModel,
+            getTanksByModelName: GameLoop.getTanksByModelName,
             getTankById: GameLoop.getTankById,
             getChildrenByType: GameLoop.getChildrenByType,
             getMapCellAt: GameLoop.getMapCellAt,
@@ -169,11 +179,11 @@ window.onload = function() {
             Game.instance = new BattleCity();
 
             /* Add player to scene */
-            Game.instance.addModel(new Tank(Game.types.tankModels.player1));
-            Game.instance.addModel(new Tank(Game.types.tankModels.player2));
+            Game.instance.addModel(new Tank('player1'));
+            Game.instance.addModel(new Tank('player2'));
 
             /* Player 1 input handling */
-            Game.instance.getTanksByModel(Game.types.tankModels.player1)[0].handleInput = function() {
+            Game.instance.getTanksByModelName('player1')[0].handleInput = function() {
                 if (Game.instance.input.keys.left) {
                     this.moveLeft();
                 }
@@ -192,7 +202,7 @@ window.onload = function() {
             };
 
             /* Player 2 input handling */
-            Game.instance.getTanksByModel(Game.types.tankModels.player2)[0].handleInput = function() {
+            Game.instance.getTanksByModelName('player2')[0].handleInput = function() {
                 if (Game.instance.input.keys.num4) {
                     this.moveLeft();
                 }
@@ -213,9 +223,11 @@ window.onload = function() {
             Game.instance.throwPowerUp();
             
             for (var i = 0; i < 1; i++) {
-                for (var j = 0; j < 8; j++) {
-                    Game.instance.addBot(j + 2).setXY(j * 64 + 32, i * 128 + 32);
-                }
+                var x = 0;
+                ['T1','T2','T3','T4','T5','T6','T7','T8'].forEach(function(modelName) {
+                    x++;
+                    Game.instance.addBot(modelName).setXY(x * 64 + 32, i * 128 + 32);
+                });
             }
             window.map = new Map(Game.instance.currentLevel);
         }

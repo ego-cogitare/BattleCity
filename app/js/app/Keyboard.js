@@ -1,15 +1,9 @@
 var Keyboard = function() {
     
-    var _keyFlags = {
-        up: false,
-        right: false,
-        down: false,
-        left: false,
-        a: false
-    };
+    var _keyFlags = {};
     
     window.addEventListener('keydown', function(event) {
-        console.log(event);
+        console.log(event.keyCode);
         switch (event.keyCode) {
             case 37: // Left
                 _keyFlags.left = true;
@@ -99,5 +93,5 @@ var Keyboard = function() {
 
     return {
         keys: _keyFlags
-    }
+    };
 };

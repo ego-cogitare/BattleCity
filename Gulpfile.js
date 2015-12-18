@@ -87,7 +87,7 @@ gulp.task('jsConcat', function () {
         .pipe(gulp.dest('build/app/js/app'));
 });
 
-gulp.task('git', shell.task('git init ; git add . ; git commit -am "Minified version" ; git remote add origin https://github.com/ego-cogitare/ego-cogitare-ego-cogitare.github.io.git; git push -u origin master'));
+gulp.task('git', shell.task('cd build ; git init ; git add . ; git commit -am "Minified version" ; git remote add origin https://github.com/ego-cogitare/ego-cogitare-ego-cogitare.github.io.git; git push -u origin master'));
 
 // Watch
 //gulp.task('watch', function () {

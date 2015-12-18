@@ -1,0 +1,22 @@
+{
+  "name": "battlecity-js",
+  "description": "Building",
+  "version": "0.0.1",
+  "devDependencies": {
+    "event-stream": "=3.3.0",
+    "gulp": "=3.8.11",
+    "gulp-concat": "^2.6.0",
+    "gulp-download": "0.0.1",
+    "gulp-gh-pages": "=0.4.0",
+    "gulp-git": "^1.6.0",
+    "gulp-inject": "^1.3.1",
+    "gulp-minify-css": "^1.1.6",
+    "gulp-shell": "^0.5.1",
+    "gulp-uglify": "=1.1.0",
+    "gulp-util": "=3.0.4",
+    "postcss-assets": "^2.1.0",
+    "run-sequence": "^1.1.1",
+    "gulp-image-optimization": "0.1.3",
+    "gulp-minify-html": "^1.0.4"
+  }
+}

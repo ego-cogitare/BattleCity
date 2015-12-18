@@ -87,8 +87,6 @@ gulp.task('jsConcat', function () {
         .pipe(gulp.dest('build/app/js/app'));
 });
 
-gulp.task('git', shell.task('cd build ; git init ; git add . ; git commit -am "Minified version" ; git push -u origin master'));
-
 // Watch
 //gulp.task('watch', function () {
 //  gulp.watch([
@@ -103,7 +101,7 @@ gulp.task('default', build);
 gulp.task('build', build);
 
 function build(cb){
-    return runSequence('copy', 'jsUglify', 'cssUglify', 'jsInjectBuild', 'cssInjectBuild', 'optymizeImages', 'minifyHtml', 'git', cb);
+    return runSequence('copy', 'jsUglify', 'cssUglify', 'jsInjectBuild', 'cssInjectBuild', 'optymizeImages', 'minifyHtml', cb);
 }
 
 function cloned (templateDir) {

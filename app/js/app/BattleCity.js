@@ -49,7 +49,7 @@ window.onload = function() {
                 _curUnixTime = new Date().getTime();
                 _timeDelta = _curUnixTime - _prevUnixTime;
                 _prevUnixTime = _curUnixTime;
-                _.each(Game.instance.getChildrenByType(['tank','shell']), function(model) { 
+                _.each(Game.instance.getChildrenByType(['tank','shell','powerUp']), function(model) { 
                     try { model.render(); } catch (e) {}
                     try { model.AIPlay(); } catch (e) {}
                 });
@@ -115,9 +115,9 @@ window.onload = function() {
             },
             getTanksByModelName: function(modelName) {
                 var tanks = [];
-                _.each(GameLoop.stage.children, function(childModel) {
-                    if (childModel.model.name === modelName) {
-                        tanks.push(childModel);
+                _.each(GameLoop.getChildrenByType(['tank']), function(tank) {
+                    if (tank.model.name === modelName) {
+                        tanks.push(tank);
                     }
                 });
                 return tanks;
@@ -177,13 +177,19 @@ window.onload = function() {
         function() {
             /* Game instance create */
             Game.instance = new BattleCity();
+            
+            /* Mobile input detection */
+            var mobileInput = new SwipeDetect();
+
+            var player1 = new Tank('player1');
+            var player2 = new Tank('player2');
 
             /* Add player to scene */
-            Game.instance.addModel(new Tank('player1'));
-            Game.instance.addModel(new Tank('player2'));
+            Game.instance.addModel(player1);
+            Game.instance.addModel(player2);
 
             /* Player 1 input handling */
-            Game.instance.getTanksByModelName('player1')[0].handleInput = function() {
+            player1.handleInput = function() {
                 if (Game.instance.input.keys.left) {
                     this.moveLeft();
                 }
@@ -199,10 +205,46 @@ window.onload = function() {
                 if (Game.instance.input.keys.z) {
                     this.shot();
                 }
+                
+                mobileInput.handleInput();
+                while (mobileInput.queue()) {
+                    var command = mobileInput.pop();
+                    
+                    switch (command.type) {
+                        case 'longSwipe': 
+                            switch (command.direction) {
+                                case 'top':
+                                    this.moveUp();
+                                break;
+                                
+                                case 'right': 
+                                    this.moveRight();
+                                break;
+                                
+                                case 'bottom':
+                                    this.moveDown();
+                                break;
+                                
+                                case 'left':
+                                    this.moveLeft();
+                                break;
+                            }
+                        break;
+                        
+                        case 'quckSwipe': 
+                            this.setDirrection(command.direction);
+                        break;
+                        
+                        case 'touch': 
+                            this.shot();
+                        break;
+                    }
+                };
+                //console.log('mobileInput', );
             };
 
             /* Player 2 input handling */
-            Game.instance.getTanksByModelName('player2')[0].handleInput = function() {
+            player2.handleInput = function() {
                 if (Game.instance.input.keys.num4) {
                     this.moveLeft();
                 }

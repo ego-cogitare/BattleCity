@@ -393,6 +393,7 @@ var Tank = function(modelName) {
             },
             setDirrection: function(dirrection) {
                 this.dirrection = dirrection;
+                return this;
             },
             moveXBy: function(offsetX) {
                 this.position.x += offsetX;
@@ -433,6 +434,7 @@ var Tank = function(modelName) {
                         break;
                     }
                 }
+                return this;
             },
             moveUp: function() {
                 if (this.canMove()) {

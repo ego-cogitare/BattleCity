@@ -3,7 +3,6 @@ var Keyboard = function() {
     var _keyFlags = {};
     
     window.addEventListener('keydown', function(event) {
-        console.log(event.keyCode);
         switch (event.keyCode) {
             case 37: // Left
                 _keyFlags.left = true;

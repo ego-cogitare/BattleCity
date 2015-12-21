@@ -75,15 +75,10 @@ var Tank = function(modelName) {
                 return !this.isHuman();
             },
             isCanDestroy: function(tailType) {
-                return Utils.inArray(tailType, this.canDestroy);
+                return _.contains(this.canDestroy, tailType);
             },
             worseDestroyAbility: function(tailType) {
-                for (var i = 0; i < this.canDestroy.length; i++) {
-                    if (this.canDestroy[i] === tailType) {
-                        delete this.canDestroy[i];
-                        break;
-                    }
-                }
+                this.canDestroy = _.without(this.canDestroy, tailType);
             },
             improveDestroyAbility: function(tailType) {
                 this.canDestroy.push(tailType);
@@ -135,10 +130,15 @@ var Tank = function(modelName) {
                 
                 switch (powerUpId) {
                     case Game.types.powerUps.helmet.id:
-                        var protectiveField = new PowerUp(Game.types.powerUps.protectiveField.id); 
-                        protectiveField.attachTo(this);
-                        Game.instance.addModel(protectiveField);
-                        this.powerUps.push(protectiveField);
+                        if (this.powerUpExists(Game.types.powerUps.protectiveField.id) >= 0) {
+                            this.updatePowerUp(Game.types.powerUps.protectiveField.id, { timeAdd: Game.instance.getTime() });
+                        }
+                        else {
+                            var protectiveField = new PowerUp(Game.types.powerUps.protectiveField.id); 
+                            protectiveField.attachTo(this);
+                            Game.instance.addModel(protectiveField);
+                            this.powerUps.push(protectiveField);
+                        }
                     break;
                     
                     case Game.types.powerUps.grenade.id: 
@@ -172,19 +172,44 @@ var Tank = function(modelName) {
                         this.setBodyType(3);
                         this.improveDestroyAbility(Game.types.mapTails.concrete);
                     break;
+                    
+                    case Game.types.powerUps.clock.id:
+                        _.each(Game.instance.getChildrenByType(['tank']), function(tank){
+                            if (this.isHuman() && !_.contains(['player1', 'player2'], tank.model.name) || this.isBot() && _.contains(['player1', 'player2'], tank.model.name)) {
+                                if (tank.powerUpExists(Game.types.powerUps.clock.id) >= 0) {
+                                    tank.updatePowerUp(Game.types.powerUps.clock.id, { timeAdd: Game.instance.getTime() });
+                                }
+                                else {
+                                    tank
+                                      .setState(Game.types.tankStates.freezed)
+                                      .powerUps
+                                      .push(new PowerUp(Game.types.powerUps.clock.id));
+                                }
+                            }
+                        }, this);
+                    break;
                 }
                 
                 Game.instance.throwPowerUp();
+            },
+            updatePowerUp: function(id, data) {
+                return _.extend(_.find(this.powerUps, { id: id }), data);
             },
             removePowerUp: function(powerUpType) {
                 _.each(this.powerUps, function(powerUp, index) {
                     if (powerUp.getId() === powerUpType) {
                         Game.instance.removeModel(powerUp);
-                        delete powerUp;
-                        delete this.powerUps[index];
-                        if (this.powerUps.length === 1) {
-                            this.powerUps = [];
+                        
+                        switch (powerUp.getId()) {
+                            case Game.types.powerUps.clock.id:
+                                this.setState(Game.types.tankStates.stop);
+                            break;
                         }
+                        
+                        delete powerUp;
+                        this.powerUps = _.filter(this.powerUps, function(powerUp, i) {
+                            return i !== index;
+                        });
                     }
                 }, this);
             },
@@ -360,6 +385,7 @@ var Tank = function(modelName) {
                 if (typeof Game.types.tankStates[state] !== 'undefined') {
                     this.curentState = state;
                 }
+                return this;
             },
             setSpeed: function(speed) {
                 this.speed = speed;
@@ -406,13 +432,22 @@ var Tank = function(modelName) {
                 this.position.y = y;
             },
             canMove: function() {
-                return Utils.inArray(this.curentState, [Game.types.tankStates.stop, Game.types.tankStates.move]);
+                return _.contains([
+                    Game.types.tankStates.stop, 
+                    Game.types.tankStates.move
+                ], this.curentState);
             },
             canShot: function() {
                 return this.canMove();
             },
             canDie: function() {
-                return (this.canMove() && this.powerUpExists(Game.types.powerUps.protectiveField.id) === -1);
+                return (
+                    _.contains([
+                        Game.types.tankStates.stop, 
+                        Game.types.tankStates.move,
+                        Game.types.tankStates.freezed
+                    ], this.curentState) && 
+                    this.powerUpExists(Game.types.powerUps.protectiveField.id) === -1);
             },
             moveForward: function() {
                 if (this.canMove()) {
@@ -584,11 +619,12 @@ var Tank = function(modelName) {
                     )
                 };
                 
-                for (var i = 0; i < Game.instance.collidableTiles.length; i++) {
-                    if (!Utils.inArray(Game.instance.collidableTiles[i], this.canNotDestroy)) {
-                        this.improveDestroyAbility(Game.instance.collidableTiles[i]);
+                // Define none braking blocks
+                _.each(Game.instance.collidableTiles, function(collidableTile) {
+                    if (!_.contains(this.canNotDestroy, collidableTile)) {
+                        this.improveDestroyAbility(collidableTile);
                     }
-                }
+                }, this);
                 
                 // Initialize tank body type
                 this.appeare();

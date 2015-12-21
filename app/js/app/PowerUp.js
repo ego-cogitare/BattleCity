@@ -91,6 +91,7 @@ var PowerUp = function(type) {
         pivot: new PIXI.Point(_tailWidth, _tailHeight),
         attachedTo: null,
         shapeTrimValue: 10,
+        timeAdd: Game.instance.getTime(),
         
         getNameById: function(id) {
             var result = null;

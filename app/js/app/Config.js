@@ -11,7 +11,8 @@ Game = {
             stop: 'stop', 
             move: 'move',
             appearing: 'appearing',
-            explosion: 'explosion'
+            explosion: 'explosion',
+            freezed: 'freezed'
         },
         tankModels: [
             {
@@ -23,7 +24,7 @@ Game = {
                 speed: 4.0,
                 shellSpeed: 14.0,
                 canNotDestroy: [
-                    6
+                    
                 ],
                 initX: 300,
                 initY: 800
@@ -183,34 +184,42 @@ Game = {
         powerUps: {
             helmet: {
                 id: 0,
+                time: 15000,
                 applyable: true
             },
             clock: {
                 id: 1,
+                time: 10000,
                 applyable: true
             },
             shovel: {
                 id: 2,
+                time: 10000,
                 applyable: true
             },
             star: {
                 id: 3,
+                time: -1,
                 applyable: true
             },
             grenade: {
                 id: 4,
+                time: -1,
                 applyable: true
             },
             tank: {
                 id: 5,
+                time: -1,
                 applyable: true
             },
             gun: {
                 id: 6,
+                time: -1,
                 applyable: true
             },
             protectiveField: {
                 id: 7,
+                time: 15000,
                 applyable: false
             }
         }

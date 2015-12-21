@@ -3,7 +3,7 @@ window.onload = function() {
             
         var _tailWidth = Game.config.tailSize.width;
         var _tailHeight = Game.config.tailSize.height;
-        var _prevUnixTime = new Date().getTime();
+        var _prevUnixTime = Date.now();
         var _curUnixTime = 0;
         var _timeDelta = 0;
         var _keyboard = new Keyboard();
@@ -41,12 +41,26 @@ window.onload = function() {
                     document.getElementById('frameRate').innerHTML = 'FPS: ' + GameLoop.frameRate;
                     GameLoop.frameRate = 0; 
                 }, 1000);
+                
+                
+                setInterval(function() {
+                    _.each(Game.instance.getChildrenByType(['tank']), function (tank) {
+                        _.each(tank.powerUps, function(powerUp) {
+                            if (powerUp) {
+                                var powerUpInfo = _.find(Game.types.powerUps, { id: powerUp.id });
+                                if (powerUpInfo && powerUpInfo.time !== -1 && powerUp.timeAdd + powerUpInfo.time < Game.instance.getTime()) {
+                                    tank.removePowerUp(powerUp.id);
+                                }
+                            }
+                        });
+                    });
+                }, 1000);
             },
             animate: function() {
                 GameLoop.frameRate++;
                 requestAnimationFrame(GameLoop.animate);
                 GameLoop.renderer.render(GameLoop.stage);
-                _curUnixTime = new Date().getTime();
+                _curUnixTime = Date.now();
                 _timeDelta = _curUnixTime - _prevUnixTime;
                 _prevUnixTime = _curUnixTime;
                 _.each(Game.instance.getChildrenByType(['tank','shell','powerUp']), function(model) { 
@@ -55,7 +69,7 @@ window.onload = function() {
                 });
             },
             getTime: function() {
-                return new Date().getTime();
+                return Date.now();
             },
             addModel: function(model) {
                 GameLoop.stage.addChild(model);
@@ -187,7 +201,7 @@ window.onload = function() {
             /* Add player to scene */
             Game.instance.addModel(player1);
             Game.instance.addModel(player2);
-
+            
             /* Player 1 input handling */
             player1.handleInput = function() {
                 if (Game.instance.input.keys.left) {
@@ -262,13 +276,13 @@ window.onload = function() {
                 }
             };
             
-            Game.instance.throwPowerUp();
+            Game.instance.throwPowerUp(Game.types.powerUps.helmet.id);
             
             for (var i = 0; i < 1; i++) {
                 var x = 0;
                 ['T1','T2','T3','T4','T5','T6','T7','T8'].forEach(function(modelName) {
                     x++;
-                    Game.instance.addBot(modelName).setXY(x * 64 + 32, i * 128 + 32);
+//                    Game.instance.addBot(modelName).setXY(x * 64 + 32, i * 128 + 32);
                 });
             }
             window.map = new Map(Game.instance.currentLevel);

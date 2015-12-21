@@ -1,0 +1,22 @@
+PowerUps
+    1. Implement power up time limitations
+    2. Implement clock power UP (freeze bots)
+    3. Implement shovel power Up
+    4. Life UP power up
+    5. Power UP cannot appear on user position or user headquarters
+    
+Bots
+    1. Add blink ability
+    2. Add armor parameter
+    3. AI improvements
+
+Game play
+    1. Death match implementation
+    2. Level bot tanks limitations
+    3. Bot's garage visualization
+    4. User life remaining 
+    5. End game on bird killed
+    6. PDA devices input handling
+        1. Tank changes direction on swipe
+        2. Taping on screen should rotate tank on taping point or make a shot if tank already rotated to taping point
+        3. Longtapping should move tank to tap point position and automatically stop the tank if it reached that point

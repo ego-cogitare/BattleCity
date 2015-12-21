@@ -1,9 +1,5 @@
 var PowerUp = function(type) {
     
-//    if (!Utils.inArray(type, Game.types.powerUps)) {
-//        return false;
-//    }
-    
     var _tailWidth = Game.config.tailSize.width;
     var _tailHeight = Game.config.tailSize.height;
     

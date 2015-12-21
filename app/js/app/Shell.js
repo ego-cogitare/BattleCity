@@ -4,7 +4,7 @@ var Shell = function() {
     var _tailHeight = Game.config.tailSize.height;
     var _explosion = new PIXI.Texture(
         Loader.resources.Atlas.texture,
-        { x: _tailWidth * 33, y: _tailHeight * 12, width: _tailWidth  * 2, height: _tailHeight * 2 }
+        { x: _tailWidth * 33, y: _tailHeight * 12, width: _tailWidth * 2, height: _tailHeight * 2 }
     );
     var _animations = {
         explosion: new Animation(
@@ -57,12 +57,9 @@ var Shell = function() {
                 this.collideWith.push(tailType);
             },
             removeCollideableTail: function(tailType) {
-                for (var i = 0; i < this.collideWith.length; i++) {
-                    if (this.collideWith[i] === tailType) {
-                        delete this.collideWith[i];
-                        break;
-                    }
-                }
+                this.collideWith = _.filter(this.collideWith, function(tail) {
+                    return tail !== tailType;
+                });
             },
             getDirrection: function() {
                 return this._dirrection;
@@ -90,6 +87,27 @@ var Shell = function() {
                 this.state = state;
             },
             die: function() {
+                // Move model to fix explosion point
+                switch (this._dirrection) {
+                    case Game.types.tankDirrections.top:
+                        this.position.x -= _tailWidth / 2;
+                    break;
+                    
+                    case Game.types.tankDirrections.right:
+                        this.position.x += _tailWidth / 2;
+                        this.position.y -= _tailHeight / 2;
+                    break;
+                    
+                    case Game.types.tankDirrections.bottom:
+                        this.position.x += _tailWidth / 2;
+                        this.position.y += _tailHeight / 2;
+                    break;
+                    
+                    case Game.types.tankDirrections.left:
+                        this.position.x += _tailWidth / 2;
+                        this.position.y += _tailHeight / 2;
+                    break;
+                }
                 this._speedX = this._speedY = 0;
                 this.setState(Game.types.shellStates.explosion);
                 _animations.explosion.reset();
@@ -174,19 +192,19 @@ var Shell = function() {
                 var mapCell_x = Game.instance.getMapCellAt(mapCoords.x - 1, mapCoords.y);
                 var mapCell_y = Game.instance.getMapCellAt(mapCoords.x, mapCoords.y - 1);
                 
-                var colided = Utils.inArray(
-                    mapCell,
-                    this.collideWith
+                var colided = _.contains(
+                    this.collideWith,
+                    mapCell
                 );
         
-                var colided_x = Utils.inArray(
-                    mapCell_x,
-                    this.collideWith
+                var colided_x = _.contains(
+                    this.collideWith,
+                    mapCell_x
                 );
         
-                var colided_y = Utils.inArray(
-                    mapCell_y,
-                    this.collideWith
+                var colided_y = _.contains(
+                    this.collideWith,
+                    mapCell_y
                 );
         
                 if (colided || colided_x || colided_y) {
@@ -213,7 +231,9 @@ var Shell = function() {
                     
                     _.each(collisionPoints, function(point) {
                         if (this.getOwner().isCanDestroy(Game.instance.getMapCellAt(point.x, point.y))) {
-                            window.map.replaceCell(point.x, point.y, Game.types.mapTails.empty);
+                            setTimeout(function() {
+                                window.map.replaceCell(point.x, point.y, Game.types.mapTails.empty);
+                            }, 50);
                         }
                     }, this);
                 }

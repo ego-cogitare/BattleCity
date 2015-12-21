@@ -274,14 +274,14 @@ var Tank = function(modelName) {
                         this.position.x + this.speedX < _tailWidth || 
                         this.position.y + this.speedY > Game.instance.screenSize().height - _tailHeight || 
                         this.position.y + this.speedY < _tailHeight ||
-                        !Utils.inArray(Game.instance.getMapCellAt(Math.floor(mapPosition.x), Math.floor(mapPosition.y)), this.canMoveOn) ||
+                        !_.contains(this.canMoveOn, Game.instance.getMapCellAt(Math.floor(mapPosition.x), Math.floor(mapPosition.y))) ||
                         (
-                            Utils.inArray(this.dirrection, [Game.types.tankDirrections.top, Game.types.tankDirrections.bottom]) &&
-                            !Utils.inArray(Game.instance.getMapCellAt(Math.floor(mapPosition.x - 1), Math.floor(mapPosition.y)), this.canMoveOn)
+                            _.contains([Game.types.tankDirrections.top, Game.types.tankDirrections.bottom], this.dirrection) &&
+                            !_.contains(this.canMoveOn, Game.instance.getMapCellAt(Math.floor(mapPosition.x - 1), Math.floor(mapPosition.y)))
                         ) ||
                         (
-                            Utils.inArray(this.dirrection, [Game.types.tankDirrections.left, Game.types.tankDirrections.right]) &&
-                            !Utils.inArray(Game.instance.getMapCellAt(Math.floor(mapPosition.x), Math.floor(mapPosition.y - 1)), this.canMoveOn)
+                            _.contains([Game.types.tankDirrections.left, Game.types.tankDirrections.right], this.dirrection) &&
+                            !_.contains(this.canMoveOn, Game.instance.getMapCellAt(Math.floor(mapPosition.x), Math.floor(mapPosition.y - 1)))
                         ) ||
                         this.collisionDetected()
                     ) 
@@ -502,7 +502,6 @@ var Tank = function(modelName) {
             clearPowerUps: function() {
                 for (var i = 0; i < this.powerUps.length; i++) {
                     Game.instance.removeModel(this.powerUps[i]);
-                    delete this.powerUps[i];
                 }
                 this.powerUps = [];
             },

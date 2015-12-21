@@ -24,7 +24,7 @@ Game = {
                 speed: 4.0,
                 shellSpeed: 14.0,
                 canNotDestroy: [
-                    
+                    6
                 ],
                 initX: 300,
                 initY: 800

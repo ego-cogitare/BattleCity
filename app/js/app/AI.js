@@ -13,7 +13,7 @@ var AI = function() {
                     Game.types.tankDirrections.left
                 ][Math.round(Math.random() * 3)];
             }
-            while (Utils.inArray(direction, exclude));
+            while (_.contains(exclude, direction));
             
             return direction;
         },

@@ -282,7 +282,7 @@ window.onload = function() {
                 var x = 0;
                 ['T1','T2','T3','T4','T5','T6','T7','T8'].forEach(function(modelName) {
                     x++;
-//                    Game.instance.addBot(modelName).setXY(x * 64 + 32, i * 128 + 32);
+                    Game.instance.addBot(modelName).setXY(x * 64 + 32, i * 128 + 32);
                 });
             }
             window.map = new Map(Game.instance.currentLevel);

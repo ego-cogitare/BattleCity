@@ -41,14 +41,14 @@ var Shell = function() {
             _speedY: 0,
             _dirrection: null,
 
-            id: Game.instance.getTime() + Game.instance.getChildrenByType(['shell']).length,
+            id: BattleCity.getTime() + BattleCity.getChildrenByType(['shell']).length,
             type: 'shell',
             zIndex: 3,
             pivot: new PIXI.Point(_tailWidth / 2, _tailHeight / 2),
             state: Game.types.shellStates.ready,
             visible: false,
             owner: null,
-            collideWith: Game.instance.collidableTiles,
+            collideWith: BattleCity.collidableTiles,
             
             getId: function() {
                 return this.id;
@@ -154,15 +154,15 @@ var Shell = function() {
                 this.position.y += this._speedY;
                 
                 if (this.state !== Game.types.shellStates.ready) {
-                    this.texture = _animations[this.state].getFrame(Game.instance.getTimeDelta());
+                    this.texture = _animations[this.state].getFrame(BattleCity.getTimeDelta());
                 }
                 
                 if (this.state === Game.types.shellStates.flying && this.collisionDetected()) {
                     this.die();
                 }
 
-                if (this.position.x > Game.instance.screenSize().width || 
-                    this.position.x < 0 || this.position.y > Game.instance.screenSize().height || 
+                if (this.position.x > BattleCity.screenSize().width || 
+                    this.position.x < 0 || this.position.y > BattleCity.screenSize().height || 
                     this.position.y < 0
                 ) {
                     this.reset();
@@ -188,9 +188,9 @@ var Shell = function() {
             },
             collisionDetected: function() {
                 var mapCoords = this.mapCoords();
-                var mapCell = Game.instance.getMapCellAt(mapCoords.x, mapCoords.y);
-                var mapCell_x = Game.instance.getMapCellAt(mapCoords.x - 1, mapCoords.y);
-                var mapCell_y = Game.instance.getMapCellAt(mapCoords.x, mapCoords.y - 1);
+                var mapCell = BattleCity.map.getMapCellAt(mapCoords.x, mapCoords.y);
+                var mapCell_x = BattleCity.map.getMapCellAt(mapCoords.x - 1, mapCoords.y);
+                var mapCell_y = BattleCity.map.getMapCellAt(mapCoords.x, mapCoords.y - 1);
                 
                 var colided = _.contains(
                     this.collideWith,
@@ -230,17 +230,15 @@ var Shell = function() {
                     } 
                     
                     _.each(collisionPoints, function(point) {
-                        if (this.getOwner().isCanDestroy(Game.instance.getMapCellAt(point.x, point.y))) {
-                            setTimeout(function() {
-                                window.map.replaceCell(point.x, point.y, Game.types.mapTails.empty);
-                            }, 50);
+                        if (this.getOwner().isCanDestroy(BattleCity.map.getMapCellAt(point.x, point.y))) {
+                            BattleCity.map.replaceCell(point.x, point.y, Game.types.mapTails.empty);
                         }
                     }, this);
                 }
                 // Check for collisions with tanks
                 else 
                 {
-                    var children = Game.instance.getChildrenByType([this.type, 'tank']);
+                    var children = BattleCity.getChildrenByType([this.type, 'tank']);
                 
                     for (var i = 0; i < children.length; i++) {
                         if ((children[i].getId() !== this.id || children[i].type !== this.type) &&

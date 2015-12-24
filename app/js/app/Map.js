@@ -1,4 +1,4 @@
-var Map = function(map) {
+var Map = function() {
     
     var _tailWidth = Game.config.tailSize.width;
     var _tailHeight = Game.config.tailSize.height;
@@ -20,21 +20,23 @@ var Map = function(map) {
     _tiles.push(_flag[0], _flag[1]);
 
     return _.extend({
+        levelId: null,
+        
         replaceCell: function(cellX, cellY, cellVal) {
-            var mapSize = Game.instance.getMapSize();
+            var mapSize = this.getMapSize();
             
             // Check map bounds
             if (cellX < 0 || cellY < 0 || cellX >= mapSize.width || cellY >= mapSize.height) {
                 return false;
             }
-            var map = Game.instance.getMap();
+            var map = this.getMap();
             map[cellY][cellX] = cellVal;
             this.getCell(cellX, cellY).texture = this.getTail(cellVal).texture;
             
             return this;
         },
         getCell: function(cellX, cellY) {
-            return _.find(Game.instance.getChildrenByType(['tail']), function(tail) {
+            return _.find(BattleCity.getChildrenByType(['tail']), function(tail) {
                 return tail.cellX === cellX && tail.cellY === cellY;
             });
         },
@@ -66,15 +68,29 @@ var Map = function(map) {
             
             return tail;
         },
-        init: function() {
-            for (var i = 0; i < Game.instance.getMap(map).length; i++) {
-                for (var j = 0; j < Game.instance.getMap(map)[i].length; j++) {
-                    var tailId = Game.instance.getMap(map)[i][j];
+        getMap: function() {
+            return Loader.resources['level' + this.levelId].data;
+        },
+        getMapCellAt: function(x, y) {
+            return (x < 0 || y < 0 || x >= this.getMap()[0].length || y >= this.getMap().length) ? 0 : this.getMap()[y][x];
+        },
+        getMapSize: function() {
+            return {
+                width: this.getMap()[0].length,
+                height: this.getMap().length
+            };
+        },
+        load: function(levelId) {
+            this.levelId = levelId;
+            
+            for (var i = 0; i < this.getMap().length; i++) {
+                for (var j = 0; j < this.getMap()[i].length; j++) {
+                    var tailId = this.getMap()[i][j];
                     var tileSprite = this.getTail(tailId);
                     tileSprite.position.x = j * _tailWidth;
                     tileSprite.position.y = i * _tailHeight;
                     tileSprite.render = function() {};
-                    Game.instance.addModel(
+                    BattleCity.addModel(
                         _.extend(tileSprite, {
                             type: 'tail',
                             id: tailId,
@@ -84,7 +100,6 @@ var Map = function(map) {
                     );
                 }
             }
-            return this;
         }
-    }).init();
+    });
 };

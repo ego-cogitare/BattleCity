@@ -1,13 +1,11 @@
 window.onload = function() {
-    var BattleCity = (function(){
-            
+    var BattleCityGame = (function(){
         var _tailWidth = Game.config.tailSize.width;
         var _tailHeight = Game.config.tailSize.height;
         var _prevUnixTime = Date.now();
         var _curUnixTime = 0;
         var _timeDelta = 0;
-        var _keyboard = new Keyboard();
-
+        
         var GameLoop = {
             currentLevel: 0,
             collidableTiles: [
@@ -24,31 +22,32 @@ window.onload = function() {
             ],
             
             screenSizes: function() {
+                var mapData = Loader.resources['level' + GameLoop.currentLevel].data;
                 return {
-                    width: this.getMap()[0].length * Game.config.tailSize.width,
-                    height: this.getMap().length * Game.config.tailSize.height
+                    width: mapData.length * Game.config.tailSize.width,
+                    height: mapData[0].length * Game.config.tailSize.height
                 };
             },
             initialize: function() {
-                this.renderer = new PIXI.autoDetectRenderer(this.screenSizes().width, this.screenSizes().height);
-                document.body.appendChild(this.renderer.view);
-                this.stage = new PIXI.Container();
+                GameLoop.renderer = new PIXI.autoDetectRenderer(GameLoop.screenSizes().width, GameLoop.screenSizes().height);
+                document.body.appendChild(GameLoop.renderer.view);
+                GameLoop.stage = new PIXI.Container();
                 requestAnimationFrame(GameLoop.animate);
                 
-                // Frame rate counter
+                /* Frame rate counter */
                 GameLoop.frameRate = 0;
                 setInterval(function() { 
                     document.getElementById('frameRate').innerHTML = 'FPS: ' + GameLoop.frameRate;
                     GameLoop.frameRate = 0; 
                 }, 1000);
                 
-                
+                /* Autoremoving powerups */
                 setInterval(function() {
-                    _.each(Game.instance.getChildrenByType(['tank']), function (tank) {
+                    _.each(BattleCity.getChildrenByType(['tank']), function (tank) {
                         _.each(tank.powerUps, function(powerUp) {
                             if (powerUp) {
                                 var powerUpInfo = _.find(Game.types.powerUps, { id: powerUp.id });
-                                if (powerUpInfo && powerUpInfo.time !== -1 && powerUp.timeAdd + powerUpInfo.time < Game.instance.getTime()) {
+                                if (powerUpInfo && powerUpInfo.time !== -1 && powerUp.timeAdd + powerUpInfo.time < BattleCity.getTime()) {
                                     tank.removePowerUp(powerUp.id);
                                 }
                             }
@@ -63,7 +62,9 @@ window.onload = function() {
                 _curUnixTime = Date.now();
                 _timeDelta = _curUnixTime - _prevUnixTime;
                 _prevUnixTime = _curUnixTime;
-                _.each(Game.instance.getChildrenByType(['tank','shell','powerUp']), function(model) { 
+                
+                /* Render main game screen */
+                _.each(BattleCity.getChildrenByType(['tank','shell','powerUp']), function(model) { 
                     try { model.render(); } catch (e) {}
                     try { model.AIPlay(); } catch (e) {}
                 });
@@ -93,18 +94,6 @@ window.onload = function() {
             getTimeDelta: function() {
                 return _timeDelta;
             },
-            getMapCellAt: function(x, y) {
-                return (x < 0 || y < 0 || x >= this.getMap()[0].length || y >= this.getMap().length) ? 0 : this.getMap()[y][x];
-            },
-            getMap: function() {
-                return Loader.resources['level' + this.currentLevel].data;
-            },
-            getMapSize: function() {
-                return {
-                    width: this.getMap()[0].length,
-                    height: this.getMap().length
-                };
-            },
             getChildren: function() {
                 return GameLoop.stage.children;
             },
@@ -117,7 +106,7 @@ window.onload = function() {
                 return _.sample(_.where(Game.types.powerUps, { applyable: true })).id;
             },
             throwPowerUp: function(powerUpType) {
-                var mapSize = GameLoop.getMapSize();
+                var mapSize = BattleCity.map.getMapSize();
                 if (typeof powerUpType === 'undefined') {
                     powerUpType = GameLoop.getRandomPowerUp();
                 }
@@ -146,27 +135,36 @@ window.onload = function() {
                 var tank = new Tank(model);
                 this.addModel(tank);
                 return tank;
+            },
+            addAssets: function() {
+                _.each(Game.config.assets, function (v, f) {
+                    if (typeof Game.config.assets[f] === 'object') {
+                        _.each(v, function (el, i) {
+                            Loader.add('level' + i, el);
+                        });
+                    } else {
+                        Loader.add(f, v);
+                    }
+                });
             }
         };
 
-        GameLoop.initialize();
-
-        return  {
+        return {
+            initialize: GameLoop.initialize,
+            addAssets: GameLoop.addAssets,
             addModel: GameLoop.addModel,
             getTankModelByName: GameLoop.getTankModelByName,
             screenSize: GameLoop.screenSizes,
             currentLevel: GameLoop.currentLevel,
             collidableTiles: GameLoop.collidableTiles,
-            getMap: GameLoop.getMap,
-            getMapSize: GameLoop.getMapSize,
             getChildren: GameLoop.getChildren,
             getTanksByModelName: GameLoop.getTanksByModelName,
             getTankById: GameLoop.getTankById,
             getChildrenByType: GameLoop.getChildrenByType,
-            getMapCellAt: GameLoop.getMapCellAt,
             getTime: GameLoop.getTime,
             getTimeDelta: GameLoop.getTimeDelta,
-            input: _keyboard,
+            input: new Keyboard(),
+            map: GameLoop.map,
             removeModel: GameLoop.removeModel,
             zIndexReorder: GameLoop.zIndexReorder,
             throwPowerUp: GameLoop.throwPowerUp,
@@ -174,49 +172,57 @@ window.onload = function() {
         };
     });
 
+    /* Assets PIXI.js loader */
     Loader = new PIXI.loaders.Loader();
     
-    // Load game resources
-    _.each(Game.config.assets, function(v, f) {
-        if (typeof Game.config.assets[f] === 'object') {
-            _.each(v, function(el, i) {
-                Loader.add('level' + i, el);
-            });
-        } else {
-            Loader.add(f, v);
-        }
-    });
+    /* Game instance */
+    BattleCity = new BattleCityGame();
     
+    /* Create required game resources list */
+    BattleCity.addAssets();
+    
+    /* Start resources loading */
+    Loader.load();
+    
+    /* After all resources are loaded */
     Loader.once('complete', 
         function() {
-            /* Game instance create */
-            Game.instance = new BattleCity();
+
+            /* Gameloop initialization */
+            BattleCity.initialize();
+            
+            /* Create game map instance */
+            BattleCity.map = new Map();
+            
+            /* Load game map */
+            BattleCity.map.load(BattleCity.currentLevel);
             
             /* Mobile input detection */
             var mobileInput = new SwipeDetect();
 
+            /* Create human players to stage */
             var player1 = new Tank('player1');
             var player2 = new Tank('player2');
 
-            /* Add player to scene */
-            Game.instance.addModel(player1);
-            Game.instance.addModel(player2);
+            /* Add human players to stage */
+            BattleCity.addModel(player1);
+            BattleCity.addModel(player2);
             
             /* Player 1 input handling */
             player1.handleInput = function() {
-                if (Game.instance.input.keys.left) {
+                if (BattleCity.input.keys.left) {
                     this.moveLeft();
                 }
-                else if (Game.instance.input.keys.right) {
+                else if (BattleCity.input.keys.right) {
                     this.moveRight();
                 }
-                else if (Game.instance.input.keys.up) {
+                else if (BattleCity.input.keys.up) {
                     this.moveUp();
                 }
-                else if (Game.instance.input.keys.down) {
+                else if (BattleCity.input.keys.down) {
                     this.moveDown();
                 }
-                if (Game.instance.input.keys.z) {
+                if (BattleCity.input.keys.z) {
                     this.shot();
                 }
                 
@@ -254,39 +260,35 @@ window.onload = function() {
                         break;
                     }
                 };
-                //console.log('mobileInput', );
             };
 
             /* Player 2 input handling */
             player2.handleInput = function() {
-                if (Game.instance.input.keys.num4) {
+                if (BattleCity.input.keys.num4) {
                     this.moveLeft();
                 }
-                else if (Game.instance.input.keys.num6) {
+                else if (BattleCity.input.keys.num6) {
                     this.moveRight();
                 }
-                else if (Game.instance.input.keys.num8) {
+                else if (BattleCity.input.keys.num8) {
                     this.moveUp();
                 }
-                else if (Game.instance.input.keys.num5) {
+                else if (BattleCity.input.keys.num5) {
                     this.moveDown();
                 }
-                if (Game.instance.input.keys.num9) {
+                if (BattleCity.input.keys.num9) {
                     this.shot();
                 }
             };
             
-            Game.instance.throwPowerUp(Game.types.powerUps.helmet.id);
-            
+            BattleCity.throwPowerUp(Game.types.powerUps.helmet.id);
             for (var i = 0; i < 1; i++) {
                 var x = 0;
-                ['T1','T2','T3','T4','T5','T6','T7','T8'].forEach(function(modelName) {
+                _(['T1','T2','T3','T4','T5','T6','T7','T8']).each(function(modelName) {
                     x++;
-                    Game.instance.addBot(modelName).setXY(x * 64 + 32, i * 128 + 32);
+                    BattleCity.addBot(modelName).setXY(x * 64 + 32, i * 128 + 32);
                 });
             }
-            window.map = new Map(Game.instance.currentLevel);
         }
     );
-    Loader.load();
 };

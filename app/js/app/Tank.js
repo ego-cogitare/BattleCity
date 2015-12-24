@@ -2,8 +2,8 @@ var Tank = function(modelName) {
 
     var _tailWidth = Game.config.tailSize.width;
     var _tailHeight = Game.config.tailSize.height;
-    var ID = Game.instance.getTime() + Game.instance.getChildrenByType(['tank']).length;
-    var model = Game.instance.getTankModelByName(modelName);
+    var ID = BattleCity.getTime() + BattleCity.getChildrenByType(['tank']).length;
+    var model = BattleCity.getTankModelByName(modelName);
     var _tailRegion = _.extend(
         {
             player1 : { x: 0,               y: 0,                width: _tailWidth * 4,     height: _tailHeight * 8 },
@@ -125,18 +125,18 @@ var Tank = function(modelName) {
                     return false;
                 }
                 var powerUpId = powerUp.id;
-                Game.instance.removeModel(powerUp);
+                BattleCity.removeModel(powerUp);
                 delete powerUp;
                 
                 switch (powerUpId) {
                     case Game.types.powerUps.helmet.id:
                         if (this.powerUpExists(Game.types.powerUps.protectiveField.id) >= 0) {
-                            this.updatePowerUp(Game.types.powerUps.protectiveField.id, { timeAdd: Game.instance.getTime() });
+                            this.updatePowerUp(Game.types.powerUps.protectiveField.id, { timeAdd: BattleCity.getTime() });
                         }
                         else {
                             var protectiveField = new PowerUp(Game.types.powerUps.protectiveField.id); 
                             protectiveField.attachTo(this);
-                            Game.instance.addModel(protectiveField);
+                            BattleCity.addModel(protectiveField);
                             this.powerUps.push(protectiveField);
                         }
                     break;
@@ -174,10 +174,10 @@ var Tank = function(modelName) {
                     break;
                     
                     case Game.types.powerUps.clock.id:
-                        _.each(Game.instance.getChildrenByType(['tank']), function(tank){
+                        _.each(BattleCity.getChildrenByType(['tank']), function(tank){
                             if (this.isHuman() && !_.contains(['player1', 'player2'], tank.model.name) || this.isBot() && _.contains(['player1', 'player2'], tank.model.name)) {
                                 if (tank.powerUpExists(Game.types.powerUps.clock.id) >= 0) {
-                                    tank.updatePowerUp(Game.types.powerUps.clock.id, { timeAdd: Game.instance.getTime() });
+                                    tank.updatePowerUp(Game.types.powerUps.clock.id, { timeAdd: BattleCity.getTime() });
                                 }
                                 else {
                                     tank
@@ -190,7 +190,7 @@ var Tank = function(modelName) {
                     break;
                 }
                 
-                Game.instance.throwPowerUp();
+                BattleCity.throwPowerUp();
             },
             updatePowerUp: function(id, data) {
                 return _.extend(_.find(this.powerUps, { id: id }), data);
@@ -198,7 +198,7 @@ var Tank = function(modelName) {
             removePowerUp: function(powerUpType) {
                 _.each(this.powerUps, function(powerUp, index) {
                     if (powerUp.getId() === powerUpType) {
-                        Game.instance.removeModel(powerUp);
+                        BattleCity.removeModel(powerUp);
                         
                         switch (powerUp.getId()) {
                             case Game.types.powerUps.clock.id:
@@ -235,7 +235,7 @@ var Tank = function(modelName) {
                 /* Check model state */
                 this.updateState();
 
-                this.texture = this._animations[this.curentState].getFrame(Game.instance.getTimeDelta());
+                this.texture = this._animations[this.curentState].getFrame(BattleCity.getTimeDelta());
 
                 // Absolute position to map position
                 var mapPosition = this.mapCoords();
@@ -270,18 +270,18 @@ var Tank = function(modelName) {
                         this.curentState === Game.types.tankStates.move
                     ) && 
                     (
-                        this.position.x + this.speedX > Game.instance.screenSize().width - _tailWidth || 
+                        this.position.x + this.speedX > BattleCity.screenSize().width - _tailWidth || 
                         this.position.x + this.speedX < _tailWidth || 
-                        this.position.y + this.speedY > Game.instance.screenSize().height - _tailHeight || 
+                        this.position.y + this.speedY > BattleCity.screenSize().height - _tailHeight || 
                         this.position.y + this.speedY < _tailHeight ||
-                        !_.contains(this.canMoveOn, Game.instance.getMapCellAt(Math.floor(mapPosition.x), Math.floor(mapPosition.y))) ||
+                        !_.contains(this.canMoveOn, BattleCity.map.getMapCellAt(Math.floor(mapPosition.x), Math.floor(mapPosition.y))) ||
                         (
                             _.contains([Game.types.tankDirrections.top, Game.types.tankDirrections.bottom], this.dirrection) &&
-                            !_.contains(this.canMoveOn, Game.instance.getMapCellAt(Math.floor(mapPosition.x - 1), Math.floor(mapPosition.y)))
+                            !_.contains(this.canMoveOn, BattleCity.map.getMapCellAt(Math.floor(mapPosition.x - 1), Math.floor(mapPosition.y)))
                         ) ||
                         (
                             _.contains([Game.types.tankDirrections.left, Game.types.tankDirrections.right], this.dirrection) &&
-                            !_.contains(this.canMoveOn, Game.instance.getMapCellAt(Math.floor(mapPosition.x), Math.floor(mapPosition.y - 1)))
+                            !_.contains(this.canMoveOn, BattleCity.map.getMapCellAt(Math.floor(mapPosition.x), Math.floor(mapPosition.y - 1)))
                         ) ||
                         this.collisionDetected()
                     ) 
@@ -307,7 +307,7 @@ var Tank = function(modelName) {
                 ];
             },
             collisionDetected: function() {
-                var children = Game.instance.getChildrenByType([this.type, 'powerUp']);
+                var children = BattleCity.getChildrenByType([this.type, 'powerUp']);
                 
                 for (var i = 0; i < children.length; i++) {
                     if ((children[i].getId() !== this.id || children[i].type !== this.type) &&
@@ -355,11 +355,11 @@ var Tank = function(modelName) {
             shot: function() {
                 if (this.canShot()) {
                     for (var i = 0; i < this.holder.length; i++) {
-                        if (this.holder[i].getState() === Game.types.shellStates.ready && Game.instance.getTime() - this.lastShootTime >= this.cooldownTime) {
+                        if (this.holder[i].getState() === Game.types.shellStates.ready && BattleCity.getTime() - this.lastShootTime >= this.cooldownTime) {
                             this.holder[i].setDirrection(this.dirrection);
                             this.holder[i].setPosition(this.position.x, this.position.y);
                             this.holder[i].shot();
-                            this.lastShootTime = Game.instance.getTime();
+                            this.lastShootTime = BattleCity.getTime();
                         }
                     }
                 }
@@ -369,11 +369,11 @@ var Tank = function(modelName) {
             increaseHolder: function() {
                 this.holder.push(new Shell());
                 this.holder[this.holder.length - 1].setOwner(this);
-                Game.instance.addModel(this.holder[this.holder.length - 1]);
+                BattleCity.addModel(this.holder[this.holder.length - 1]);
                 return this.holder[this.holderSize++];
             },
             decreaseHolder: function() {
-                Game.instance.removeModel(this.holder.pop());
+                BattleCity.removeModel(this.holder.pop());
                 if (this.holderSize > 0) {
                     this.holderSize--;
                 }
@@ -497,11 +497,11 @@ var Tank = function(modelName) {
             },
             updateZIndex: function(zIndex) {
                 this.zIndex = zIndex;
-                Game.instance.zIndexReorder();
+                BattleCity.zIndexReorder();
             },
             clearPowerUps: function() {
                 for (var i = 0; i < this.powerUps.length; i++) {
-                    Game.instance.removeModel(this.powerUps[i]);
+                    BattleCity.removeModel(this.powerUps[i]);
                 }
                 this.powerUps = [];
             },
@@ -534,7 +534,7 @@ var Tank = function(modelName) {
                 for (var i = 0; i < this.holderSize; i++) {
                     this.holder.push(new Shell());
                     this.holder[i].setOwner(this).setSpeed(model.shellSpeed);
-                    Game.instance.addModel(this.holder[i]);
+                    BattleCity.addModel(this.holder[i]);
                 }
                 
                 // Tank can't break concrete walls as default
@@ -565,7 +565,7 @@ var Tank = function(modelName) {
                     this.appeare();
                 }
                 else {
-                    Game.instance.removeModel(this);
+                    BattleCity.removeModel(this);
                     delete this;
                 }
             },
@@ -619,7 +619,7 @@ var Tank = function(modelName) {
                 };
                 
                 // Define none braking blocks
-                _.each(Game.instance.collidableTiles, function(collidableTile) {
+                _.each(BattleCity.collidableTiles, function(collidableTile) {
                     if (!_.contains(this.canNotDestroy, collidableTile)) {
                         this.improveDestroyAbility(collidableTile);
                     }

@@ -1,7 +1,7 @@
 var AI = function() {
     return {
         _AIPlayTimeDelta: 300,
-        _AILastPlayTime: Game.instance.getTime(),
+        _AILastPlayTime: BattleCity.getTime(),
         
         _getRandomDirrection: function(exclude) {
             var direction = null;
@@ -45,7 +45,7 @@ var AI = function() {
                     this._getOppositeDirrection()
                 ],
                 mapCoords = this.mapCoords(),
-                mapSize = Game.instance.getMapSize();
+                mapSize = BattleCity.map.getMapSize();
 
             if (Math.ceil(mapCoords.x) <= 1) {
                 excludeDirection.push(Game.types.tankDirrections.left);
@@ -63,8 +63,8 @@ var AI = function() {
             return this._getRandomDirrection(excludeDirection);
         },
         AIPlay: function() {
-            if (Game.instance.getTime() - this._AILastPlayTime > this._AIPlayTimeDelta) {
-                this._AILastPlayTime = Game.instance.getTime();
+            if (BattleCity.getTime() - this._AILastPlayTime > this._AIPlayTimeDelta) {
+                this._AILastPlayTime = BattleCity.getTime();
                 
                 
                 

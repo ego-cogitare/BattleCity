@@ -87,7 +87,7 @@ var PowerUp = function(type) {
         pivot: new PIXI.Point(_tailWidth, _tailHeight),
         attachedTo: null,
         shapeTrimValue: 10,
-        timeAdd: Game.instance.getTime(),
+        timeAdd: BattleCity.getTime(),
         
         getNameById: function(id) {
             var result = null;
@@ -112,7 +112,7 @@ var PowerUp = function(type) {
             return this.attachedTo;
         },
         die: function() {
-            Game.instance.removeModel(this);
+            BattleCity.removeModel(this);
         },
         getId: function() {
             return this.id;
@@ -124,7 +124,7 @@ var PowerUp = function(type) {
             if (this.attachedTo !== null) {
                 _sprite.position = this.attachedTo.position;
             }
-            _sprite.texture = _animations[type].getFrame(Game.instance.getTimeDelta());
+            _sprite.texture = _animations[type].getFrame(BattleCity.getTimeDelta());
         },
         getShape: function() {
             return [

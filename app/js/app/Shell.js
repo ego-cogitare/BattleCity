@@ -242,6 +242,7 @@ var Shell = function() {
                 
                     for (var i = 0; i < children.length; i++) {
                         if ((children[i].getId() !== this.id || children[i].type !== this.type) &&
+                            children[i].getState() !== Game.types.tankStates.explosion &&
                             Utils.rectIntersect(
                                 this.getShape()[0], 
                                 this.getShape()[1],

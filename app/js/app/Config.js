@@ -1,5 +1,4 @@
 Game = {
-    instance: null,
     types: {
         tankDirrections: { 
             top: 'top', 

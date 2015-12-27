@@ -81,7 +81,7 @@ var PowerUp = function(type) {
         ], _duration);
     
     return _.extend(_sprite, {
-        zIndex: 2,
+        zIndex: 4,
         id: type,
         type: 'powerUp',
         pivot: new PIXI.Point(_tailWidth, _tailHeight),

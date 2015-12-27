@@ -187,6 +187,9 @@ var Shell = function() {
                 return { x: mapX, y: mapY };
             },
             collisionDetected: function() {
+                
+//                return false;
+                
                 var mapCoords = this.mapCoords();
                 var mapCell = BattleCity.map.getMapCellAt(mapCoords.x, mapCoords.y);
                 var mapCell_x = BattleCity.map.getMapCellAt(mapCoords.x - 1, mapCoords.y);
@@ -230,7 +233,10 @@ var Shell = function() {
                     } 
                     
                     _.each(collisionPoints, function(point) {
-                        if (this.getOwner().isCanDestroy(BattleCity.map.getMapCellAt(point.x, point.y))) {
+                        if (BattleCity.map.isCrestCell(point.x, point.y)) {
+                            BattleCity.gameOver();
+                        }
+                        else if (this.getOwner().isCanDestroy(BattleCity.map.getMapCellAt(point.x, point.y))) {
                             BattleCity.map.replaceCell(point.x, point.y, Game.types.mapTails.empty);
                         }
                     }, this);

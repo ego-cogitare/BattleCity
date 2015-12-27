@@ -37,7 +37,7 @@ window.onload = function() {
                 /* Frame rate counter */
                 GameLoop.frameRate = 0;
                 setInterval(function() { 
-                    document.getElementById('frameRate').innerHTML = 'FPS: ' + GameLoop.frameRate;
+                    document.getElementById('frameRate').innerHTML = 'FPS: ' + GameLoop.frameRate + ' OBJECTS: ' + GameLoop.getChildren().length;
                     GameLoop.frameRate = 0; 
                 }, 1000);
                 
@@ -68,6 +68,10 @@ window.onload = function() {
                     try { model.render(); } catch (e) {}
                     try { model.AIPlay(); } catch (e) {}
                 });
+            },
+            gameOver: function() {
+                BattleCity.map.killCrest();
+                console.log('Game over');
             },
             getTime: function() {
                 return Date.now();
@@ -111,8 +115,8 @@ window.onload = function() {
                     powerUpType = GameLoop.getRandomPowerUp();
                 }
                 var powerUp = new PowerUp(powerUpType).setPosition(
-                    _.random(mapSize.width * _tailWidth),
-                    _.random(mapSize.height * _tailHeight)
+                    (_.random(mapSize.width - 2) + 1) * _tailWidth,
+                    (_.random(mapSize.height - 2) + 1) * _tailHeight
                 );
                 this.addModel(powerUp);
             },
@@ -165,6 +169,7 @@ window.onload = function() {
             getTimeDelta: GameLoop.getTimeDelta,
             input: new Keyboard(),
             map: GameLoop.map,
+            gameOver: GameLoop.gameOver,
             removeModel: GameLoop.removeModel,
             zIndexReorder: GameLoop.zIndexReorder,
             throwPowerUp: GameLoop.throwPowerUp,
@@ -281,7 +286,7 @@ window.onload = function() {
                 }
             };
             
-            BattleCity.throwPowerUp(Game.types.powerUps.helmet.id);
+            BattleCity.throwPowerUp(Game.types.powerUps.shovel.id);
             for (var i = 0; i < 1; i++) {
                 var x = 0;
                 _(['T1','T2','T3','T4','T5','T6','T7','T8']).each(function(modelName) {

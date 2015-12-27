@@ -4,18 +4,14 @@ var AI = function() {
         _AILastPlayTime: BattleCity.getTime(),
         
         _getRandomDirrection: function(exclude) {
-            var direction = null;
-            do {
-                direction = [
+            return _.sample(
+                _.difference([
                     Game.types.tankDirrections.top,
                     Game.types.tankDirrections.right,
                     Game.types.tankDirrections.bottom,
                     Game.types.tankDirrections.left
-                ][Math.round(Math.random() * 3)];
-            }
-            while (_.contains(exclude, direction));
-            
-            return direction;
+                ], exclude)
+            );
         },
         _getProbability: function(probability) {
             return Math.random() < probability;

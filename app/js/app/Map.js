@@ -22,6 +22,13 @@ var Map = function() {
     return _.extend({
         levelId: null,
         
+        crestCells: [
+            Game.types.mapTails.flagAliveTopLeft,
+            Game.types.mapTails.flagAliveTopRight,
+            Game.types.mapTails.flagAliveBottomLeft,
+            Game.types.mapTails.flagAliveBottomRight
+        ],
+        
         replaceCell: function(cellX, cellY, cellVal) {
             var mapSize = this.getMapSize();
             
@@ -31,7 +38,15 @@ var Map = function() {
             }
             var map = this.getMap();
             map[cellY][cellX] = cellVal;
-            this.getCell(cellX, cellY).texture = this.getTail(cellVal).texture;
+            
+            if (cellVal === Game.types.mapTails.empty) {
+                BattleCity.removeModel(
+                    _.findWhere(BattleCity.getChildrenByType(['tail']), { cellX: cellX, cellY: cellY })
+                );
+            }
+            else {
+                this.getCell(cellX, cellY).texture = this.getTail(cellVal).texture;
+            }
             
             return this;
         },
@@ -60,7 +75,7 @@ var Map = function() {
                 
                 { x: 2, y: 4, zIndex: 3 }, //14: Dead:left-top 
                 { x: 3, y: 4, zIndex: 3 }, //15: Dead:right-top
-                { x: 2, y: 4, zIndex: 3 }, //16: Dead:left-bottom
+                { x: 2, y: 5, zIndex: 3 }, //16: Dead:left-bottom
                 { x: 3, y: 5, zIndex: 3 }  //17: Dead:right-bottom 
             ];
             var tail = new PIXI.Sprite(_tiles[tailMap[id].y][tailMap[id].x]);
@@ -80,24 +95,67 @@ var Map = function() {
                 height: this.getMap().length
             };
         },
+        isCrestCell: function(cellX, cellY) {
+            return _.contains(this.crestCells, this.getMapCellAt(cellX, cellY));
+        },
+        getCrestCells: function() {
+            var crestPoints = [];
+            
+            for (var i = 0; i < this.getMapSize().height; i++) {
+                for (var j = 0; j < this.getMapSize().width; j++) {
+                    if (this.isCrestCell(j, i)) {
+                        crestPoints.push({ x: j, y: i });
+                    }
+                }
+            }
+        },
+        killCrest: function() {
+            for (var i = 0; i < this.getMapSize().height; i++) {
+                for (var j = 0; j < this.getMapSize().width; j++) {
+                    if (this.isCrestCell(j, i)) {
+                        this.replaceCell(
+                            j, i,
+                            this.getMapCellAt(j, i) + 4
+                        );
+                    }
+                }
+            }
+        },
+        updateBase: function(tailId) {
+            _.each(this.getMap(), function (row, rowNumber) {
+                var crestIndex = _.findIndex(row, function (cell) { return Game.types.mapTails.flagAliveTopLeft === cell; }, this);
+                if (crestIndex > -1) {
+                    for (var cellY = rowNumber - 1; cellY <= rowNumber + 2; cellY++) {
+                        for (var cellX = crestIndex - 1; cellX <= crestIndex + 2; cellX++) {
+                            if (cellY === rowNumber - 1 || cellX === crestIndex - 1 || cellX === crestIndex + 2) {
+                                this.replaceCell(cellX, cellY, tailId);
+                            }
+                        }
+                    }
+                }
+            }, this);
+        },
         load: function(levelId) {
             this.levelId = levelId;
             
             for (var i = 0; i < this.getMap().length; i++) {
                 for (var j = 0; j < this.getMap()[i].length; j++) {
                     var tailId = this.getMap()[i][j];
-                    var tileSprite = this.getTail(tailId);
-                    tileSprite.position.x = j * _tailWidth;
-                    tileSprite.position.y = i * _tailHeight;
-                    tileSprite.render = function() {};
-                    BattleCity.addModel(
-                        _.extend(tileSprite, {
-                            type: 'tail',
-                            id: tailId,
-                            cellX: j,
-                            cellY: i
-                        })
-                    );
+                    
+                    if (tailId !== Game.types.mapTails.empty) {
+                        var tileSprite = this.getTail(tailId);
+                        tileSprite.position.x = j * _tailWidth;
+                        tileSprite.position.y = i * _tailHeight;
+                        tileSprite.render = function() {};
+                        BattleCity.addModel(
+                            _.extend(tileSprite, {
+                                type: 'tail',
+                                id: tailId,
+                                cellX: j,
+                                cellY: i
+                            })
+                        );
+                    }
                 }
             }
         }

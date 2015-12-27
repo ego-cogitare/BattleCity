@@ -120,15 +120,16 @@ var Tank = function(modelName) {
                     this.curentState = Game.types.tankStates.stop;
                 }
             },
+            isOpponent: function(tank) {
+                return (this.isHuman() && !_.contains(['player1', 'player2'], tank.model.name) || this.isBot() && _.contains(['player1', 'player2'], tank.model.name));
+            },
             applyPowerUp: function(powerUp) {
                 if (!powerUp.applyable) {
                     return false;
                 }
-                var powerUpId = powerUp.id;
                 BattleCity.removeModel(powerUp);
-                delete powerUp;
                 
-                switch (powerUpId) {
+                switch (powerUp.id) {
                     case Game.types.powerUps.helmet.id:
                         if (this.powerUpExists(Game.types.powerUps.protectiveField.id) >= 0) {
                             this.updatePowerUp(Game.types.powerUps.protectiveField.id, { timeAdd: BattleCity.getTime() });
@@ -141,8 +142,12 @@ var Tank = function(modelName) {
                         }
                     break;
                     
-                    case Game.types.powerUps.grenade.id: 
-                        this.die();
+                    case Game.types.powerUps.grenade.id:
+                        _.each(BattleCity.getChildrenByType(['tank']), function(tank){
+                            if (this.isOpponent(tank)) {
+                                tank.die();
+                            }
+                        }, this);
                     break;
                     
                     case Game.types.powerUps.star.id: 
@@ -183,10 +188,18 @@ var Tank = function(modelName) {
                                     tank
                                       .setState(Game.types.tankStates.freezed)
                                       .powerUps
-                                      .push(new PowerUp(Game.types.powerUps.clock.id));
+                                      .push(powerUp);
                                 }
                             }
                         }, this);
+                    break;
+                    
+                    case Game.types.powerUps.shovel.id:
+                        BattleCity.map.updateBase(
+                            this.isHuman() ? 
+                                Game.types.mapTails.concrete : 
+                                Game.types.mapTails.empty
+                        );
                     break;
                 }
                 
@@ -239,6 +252,9 @@ var Tank = function(modelName) {
 
                 // Absolute position to map position
                 var mapPosition = this.mapCoords();
+                
+                // Justify tank position on map
+                this.justifyCoordsToMap();
 
                 switch (this.dirrection) {
                     case Game.types.tankDirrections.top:
@@ -262,8 +278,6 @@ var Tank = function(modelName) {
                     break;
                 }
 
-                this.justifyCoordsToMap();
-
                 if 
                 (
                     (
@@ -274,14 +288,14 @@ var Tank = function(modelName) {
                         this.position.x + this.speedX < _tailWidth || 
                         this.position.y + this.speedY > BattleCity.screenSize().height - _tailHeight || 
                         this.position.y + this.speedY < _tailHeight ||
-                        !_.contains(this.canMoveOn, BattleCity.map.getMapCellAt(Math.floor(mapPosition.x), Math.floor(mapPosition.y))) ||
+                        !_.contains(this.canMoveOn, BattleCity.map.getMapCellAt(mapPosition.x, mapPosition.y)) ||
                         (
                             _.contains([Game.types.tankDirrections.top, Game.types.tankDirrections.bottom], this.dirrection) &&
-                            !_.contains(this.canMoveOn, BattleCity.map.getMapCellAt(Math.floor(mapPosition.x - 1), Math.floor(mapPosition.y)))
+                            !_.contains(this.canMoveOn, BattleCity.map.getMapCellAt(mapPosition.x - 1, mapPosition.y))
                         ) ||
                         (
                             _.contains([Game.types.tankDirrections.left, Game.types.tankDirrections.right], this.dirrection) &&
-                            !_.contains(this.canMoveOn, BattleCity.map.getMapCellAt(Math.floor(mapPosition.x), Math.floor(mapPosition.y - 1)))
+                            !_.contains(this.canMoveOn, BattleCity.map.getMapCellAt(mapPosition.x, mapPosition.y - 1))
                         ) ||
                         this.collisionDetected()
                     ) 
@@ -330,19 +344,29 @@ var Tank = function(modelName) {
                 return false;
             },
             mapCoords: function() {
-                var mapX = this.position.x / _tailWidth;
-                var mapY = this.position.y / _tailHeight;
+                var mapX = this.position.x >> 5;
+                var mapY = this.position.y >> 5;
 
                 return { x: mapX, y: mapY };
             },
             justifyCoordsToMap: function() {
                 switch (this.dirrection) {
                     case Game.types.tankDirrections.top: case Game.types.tankDirrections.bottom:
-                        this.position.x = Math.round(this.mapCoords().x) * _tailWidth;
+                        if (this.position.x % _tailWidth > _tailWidth >> 1) {
+                            this.position.x = (this.mapCoords().x << 5) + _tailWidth;
+                        }
+                        else {
+                            this.position.x = this.mapCoords().x << 5;
+                        }
                     break;
 
                     case Game.types.tankDirrections.left: case Game.types.tankDirrections.right:
-                        this.position.y = Math.round(this.mapCoords().y) * _tailHeight;
+                        if (this.position.y % _tailHeight > _tailHeight >> 1) {
+                            this.position.y = (this.mapCoords().y << 5) + _tailHeight;
+                        }
+                        else {
+                            this.position.y = this.mapCoords().y << 5;
+                        }
                     break;
                 }
             },
@@ -418,6 +442,8 @@ var Tank = function(modelName) {
                 return this.dirrection;
             },
             setDirrection: function(dirrection) {
+//                this.justifyCoordsToMap();
+                
                 this.dirrection = dirrection;
                 return this;
             },
@@ -505,7 +531,11 @@ var Tank = function(modelName) {
                 }
                 this.powerUps = [];
             },
-            
+            clearHolder: function() {
+                for (var i = 0; i <= this.model.holderSize; i++) {
+                    this.decreaseHolder();
+                }
+            },
             appeare: function() {
                 // Reset animation
                 this._animations.appearing.reset();
@@ -554,6 +584,7 @@ var Tank = function(modelName) {
                 }
             },
             die: function() {
+                this.clearHolder();
                 this.clearPowerUps();
                 this.updateZIndex(5);
                 this.setState(Game.types.tankStates.explosion);

@@ -17,7 +17,7 @@ Game = {
             {
                 name: 'player1',
                 isHuman: true,
-                holderSize: 3,
+                holderSize: 2,
                 cooldownTime: 100,
                 scale: 1,
                 speed: 4.0,
@@ -31,7 +31,7 @@ Game = {
             {
                 name: 'player2',
                 isHuman: true,
-                holderSize: 1,
+                holderSize: 2,
                 cooldownTime: 100,
                 scale: 1,
                 speed: 3.0,
@@ -51,7 +51,7 @@ Game = {
                 speed: 2.0,
                 shellSpeed: 7.0,
                 canNotDestroy: [
-                    1,2,3,4,5,6
+                    6
                 ],
                 initX: 200,
                 initY: 30
@@ -65,7 +65,7 @@ Game = {
                 speed: 2.5,
                 shellSpeed: 15.0,
                 canNotDestroy: [
-                    1,2,3,4,5,6
+                    6
                 ],
                 initX: 300,
                 initY: 30
@@ -79,7 +79,7 @@ Game = {
                 speed: 3.0,
                 shellSpeed: 15.0,
                 canNotDestroy: [
-                    1,2,3,4,5,6
+                    6
                 ],
                 initX: 400,
                 initY: 30
@@ -93,7 +93,7 @@ Game = {
                 speed: 4.0,
                 shellSpeed: 15.0,
                 canNotDestroy: [
-                    1,2,3,4,5,6
+                    6
                 ],
                 initX: 500,
                 initY: 30
@@ -107,7 +107,7 @@ Game = {
                 speed: 2.5,
                 shellSpeed: 12.0,
                 canNotDestroy: [
-                    1,2,3,4,5,6
+                    6
                 ],
                 initX: 600,
                 initY: 30
@@ -121,7 +121,7 @@ Game = {
                 speed: 6.0,
                 shellSpeed: 11.0,
                 canNotDestroy: [
-                    1,2,3,4,5,6
+                    6
                 ],
                 initX: 700,
                 initY: 30
@@ -135,7 +135,7 @@ Game = {
                 speed: 2.0,
                 shellSpeed: 15.0,
                 canNotDestroy: [
-                    1,2,3,4,5,6
+                    6
                 ],
                 initX: 800,
                 initY: 30
@@ -149,7 +149,7 @@ Game = {
                 speed: 1.5,
                 shellSpeed: 20.0,
                 canNotDestroy: [
-                    1,2,3,4,5,6
+                    6
                 ],
                 initX: 35,
                 initY: 30

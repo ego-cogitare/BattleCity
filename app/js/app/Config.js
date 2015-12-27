@@ -21,7 +21,7 @@ Game = {
                 cooldownTime: 100,
                 scale: 1,
                 speed: 4.0,
-                shellSpeed: 14.0,
+                shellSpeed: 4.0,
                 canNotDestroy: [
                     6
                 ],
@@ -35,7 +35,7 @@ Game = {
                 cooldownTime: 100,
                 scale: 1,
                 speed: 3.0,
-                shellSpeed: 7.0,
+                shellSpeed: 2.0,
                 canNotDestroy: [
                     6
                 ],

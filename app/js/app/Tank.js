@@ -396,12 +396,12 @@ var Tank = function(modelName) {
                 BattleCity.addModel(this.holder[this.holder.length - 1]);
                 return this.holder[this.holderSize++];
             },
-            decreaseHolder: function() {
-                BattleCity.removeModel(this.holder.pop());
-                if (this.holderSize > 0) {
-                    this.holderSize--;
-                }
-            },
+//            decreaseHolder: function() {
+//                BattleCity.removeModel(this.holder.pop());
+//                if (this.holderSize > 0) {
+//                    this.holderSize--;
+//                }
+//            },
             getState: function() {
                 return this.curentState;
             },
@@ -533,8 +533,18 @@ var Tank = function(modelName) {
             },
             clearHolder: function() {
                 for (var i = 0; i <= this.model.holderSize; i++) {
-                    this.decreaseHolder();
+                    var shell = this.holder.pop();
+                    if (shell) {
+                        if (shell.getState() === Game.types.shellStates.flying) {
+                            shell.dieOnReset = true;
+                        }
+                        else {
+                            BattleCity.removeModel(shell);
+                            delete shell;
+                        }
+                    }
                 }
+                this.holderSize = 0;
             },
             appeare: function() {
                 // Reset animation
@@ -584,7 +594,6 @@ var Tank = function(modelName) {
                 }
             },
             die: function() {
-                this.clearHolder();
                 this.clearPowerUps();
                 this.updateZIndex(5);
                 this.setState(Game.types.tankStates.explosion);
@@ -592,6 +601,7 @@ var Tank = function(modelName) {
             },
             // Reinitialization tank model depends on model type
             finalize: function() {
+                this.clearHolder();
                 if (this.isHuman()) {
                     this.appeare();
                 }

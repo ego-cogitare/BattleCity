@@ -49,6 +49,7 @@ var Shell = function() {
             visible: false,
             owner: null,
             collideWith: BattleCity.collidableTiles,
+            dieOnReset: false,
             
             getId: function() {
                 return this.id;
@@ -113,9 +114,15 @@ var Shell = function() {
                 _animations.explosion.reset();
             },
             reset: function() {
-                this.visible = false;
-                this._speedX = this._speedY = 0;
-                this.state = Game.types.shellStates.ready;
+                if (this.dieOnReset) {
+                    BattleCity.removeModel(this);
+                    delete this;
+                }
+                else {
+                    this.visible = false;
+                    this._speedX = this._speedY = 0;
+                    this.state = Game.types.shellStates.ready;
+                }
             },
             getState: function() {
                 return this.state;
@@ -187,9 +194,6 @@ var Shell = function() {
                 return { x: mapX, y: mapY };
             },
             collisionDetected: function() {
-                
-//                return false;
-                
                 var mapCoords = this.mapCoords();
                 var mapCell = BattleCity.map.getMapCellAt(mapCoords.x, mapCoords.y);
                 var mapCell_x = BattleCity.map.getMapCellAt(mapCoords.x - 1, mapCoords.y);

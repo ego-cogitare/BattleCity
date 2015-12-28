@@ -87,21 +87,19 @@ gulp.task('jsConcat', function () {
         .pipe(gulp.dest('build/app/js/app'));
 });
 
-// Watch
-//gulp.task('watch', function () {
-//  gulp.watch([
-//    'source/css/*.css',
-//    'source/index.html',
-//    'source/js/**/*'
-//  ],['js','copy']);
-//});
+/* ANDROID */
+gulp.task('copyMobile', function() {
+    return gulp.src('build/**/*').pipe(gulp.dest('mobile/www'));
+});
+gulp.task('runAndroid', shell.task('cd mobile && ionic run android'));
+/* ANDROID */
 
 gulp.task('default', build);
 
 gulp.task('build', build);
 
 function build(cb){
-    return runSequence('copy', 'jsUglify', 'cssUglify', 'jsInjectBuild', 'cssInjectBuild', 'optymizeImages', 'minifyHtml', cb);
+    return runSequence('copy', 'jsUglify', 'cssUglify', 'jsInjectBuild', 'cssInjectBuild', 'optymizeImages', 'minifyHtml', 'copyMobile', cb);
 }
 
 function cloned (templateDir) {

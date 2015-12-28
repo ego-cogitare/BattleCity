@@ -2,3 +2,5 @@
 /app/js/vendors
 /node_modules
 /build
+/mobile/www
+/mobile/node_modules

@@ -1,4 +1,4 @@
 # BattleCity
 Battlecity game clone.
 
-![Alt text](/relative/path/to/img.jpg?raw=true "Optional Title")
+![Alt text](app/asset/textures/atlas4x.png?raw=true "Optional Title")

@@ -277,7 +277,10 @@ var Shell = function() {
                                 ) 
                             )
                             {
+                                // Return shell to holder
                                 this.reset();
+                                
+                                // Hit tank by shell 
                                 children[i].shellHit(this);
                             }
                         } 

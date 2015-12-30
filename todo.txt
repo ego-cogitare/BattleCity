@@ -6,7 +6,7 @@ x    4. Life UP power up
 x    5. Power UP cannot appear on user position or user headquarters
     
 Bots
-x    1. Add blink ability
+!    1. Add blink ability
 x    2. Add armor parameter
 x    3. AI improvements
 

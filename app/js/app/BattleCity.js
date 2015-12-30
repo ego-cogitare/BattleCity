@@ -302,12 +302,13 @@ window.onload = function() {
                 }
             };
             
-            BattleCity.throwPowerUp(Game.types.powerUps.shovel.id);
             for (var i = 0; i < 1; i++) {
                 var x = 0;
                 _(['T1','T2','T3','T4','T5','T6','T7','T8']).each(function(modelName) {
                     x++;
-                    BattleCity.addBot(modelName).setXY(x * 64 + 32, i * 128 + 32);
+                    var bot = BattleCity.addBot(modelName);
+                    bot.setXY(x * 64 + 32, i * 128 + 32);
+                    bot.setBlink(true);
                 });
             }
         }

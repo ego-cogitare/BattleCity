@@ -6,16 +6,31 @@ var Tank = function(modelName) {
     var model = BattleCity.getTankModelByName(modelName);
     var _tailRegion = _.extend(
         {
-            player1 : { x: 0,               y: 0,                width: _tailWidth * 4,     height: _tailHeight * 8 },
-            player2 : { x: 0,               y: _tailHeight * 16, width: _tailWidth * 2 + 1, height: _tailHeight * 8 },
-            T1      : { x: _tailWidth * 16, y: 0,                width: _tailWidth * 4,     height: _tailHeight * 2 },
-            T2      : { x: _tailWidth * 16, y: _tailHeight * 2,  width: _tailWidth * 4,     height: _tailHeight * 2 },
-            T3      : { x: _tailWidth * 16, y: _tailHeight * 4,  width: _tailWidth * 4,     height: _tailHeight * 2 },
-            T4      : { x: _tailWidth * 16, y: _tailHeight * 6,  width: _tailWidth * 4,     height: _tailHeight * 2 },
-            T5      : { x: _tailWidth * 16, y: _tailHeight * 8,  width: _tailWidth * 4,     height: _tailHeight * 2 },
-            T6      : { x: _tailWidth * 16, y: _tailHeight * 10, width: _tailWidth * 4,     height: _tailHeight * 2 },
-            T7      : { x: _tailWidth * 16, y: _tailHeight * 12, width: _tailWidth * 4,     height: _tailHeight * 2 },
-            T8      : { x: _tailWidth * 16, y: _tailHeight * 14, width: _tailWidth * 4,     height: _tailHeight * 2 }
+            player1 : { x: 0,               y: 0,                width: _tailWidth * 4, height: _tailHeight * 8 },
+            player2 : { x: 0,               y: _tailHeight * 16, width: _tailWidth * 4, height: _tailHeight * 8 },
+            T1      : { x: _tailWidth * 16, y: 0,                width: _tailWidth * 4, height: _tailHeight * 2 },
+            T2      : { x: _tailWidth * 16, y: _tailHeight * 2,  width: _tailWidth * 4, height: _tailHeight * 2 },
+            T3      : { x: _tailWidth * 16, y: _tailHeight * 4,  width: _tailWidth * 4, height: _tailHeight * 2 },
+            T4      : { x: _tailWidth * 16, y: _tailHeight * 6,  width: _tailWidth * 4, height: _tailHeight * 2 },
+            T5      : { x: _tailWidth * 16, y: _tailHeight * 8,  width: _tailWidth * 4, height: _tailHeight * 2 },
+            T6      : { x: _tailWidth * 16, y: _tailHeight * 10, width: _tailWidth * 4, height: _tailHeight * 2 },
+            T7      : { x: _tailWidth * 16, y: _tailHeight * 12, width: _tailWidth * 4, height: _tailHeight * 2 },
+            T8      : { x: _tailWidth * 16, y: _tailHeight * 14, width: _tailWidth * 4, height: _tailHeight * 2 }
+        }
+    )[modelName];
+    
+    var _tailRegionBlink = _.extend(
+        {
+            player1 : { x: _tailWidth * 16, y: _tailHeight * 16, width: _tailWidth * 4, height: _tailHeight * 8 },
+            player2 : { x: _tailWidth * 16, y: _tailHeight * 16, width: _tailWidth * 4, height: _tailHeight * 8 },
+            T1      : { x: _tailWidth * 16, y: _tailHeight * 16, width: _tailWidth * 4, height: _tailHeight * 2 },
+            T2      : { x: _tailWidth * 16, y: _tailHeight * 18, width: _tailWidth * 4, height: _tailHeight * 2 },
+            T3      : { x: _tailWidth * 16, y: _tailHeight * 20, width: _tailWidth * 4, height: _tailHeight * 2 },
+            T4      : { x: _tailWidth * 16, y: _tailHeight * 22, width: _tailWidth * 4, height: _tailHeight * 2 },
+            T5      : { x: _tailWidth * 16, y: _tailHeight * 24, width: _tailWidth * 4, height: _tailHeight * 2 },
+            T6      : { x: _tailWidth * 16, y: _tailHeight * 26, width: _tailWidth * 4, height: _tailHeight * 2 },
+            T7      : { x: _tailWidth * 16, y: _tailHeight * 28, width: _tailWidth * 4, height: _tailHeight * 2 },
+            T8      : { x: _tailWidth * 16, y: _tailHeight * 30, width: _tailWidth * 4, height: _tailHeight * 2 }
         }
     )[modelName];
     
@@ -23,6 +38,13 @@ var Tank = function(modelName) {
         new PIXI.Texture(
             Loader.resources.Atlas.texture,
             _tailRegion
+        )
+    ).explode(_tailWidth * 2, _tailHeight * 2);
+    
+    var _framesBlink = new TextureExploder(
+        new PIXI.Texture(
+            Loader.resources.Atlas.texture,
+            _tailRegionBlink
         )
     ).explode(_tailWidth * 2, _tailHeight * 2);
     
@@ -47,6 +69,7 @@ var Tank = function(modelName) {
             id: ID,
             type: 'tank',
             model: model,
+            blink: false,
             bodyType: 0,
             zIndex: 1,
             speed: 2,
@@ -74,6 +97,49 @@ var Tank = function(modelName) {
             isBot: function() {
                 return !this.isHuman();
             },
+            setBlink: function(blink) {
+                if (blink) {
+                    this.setBlinkBody();
+                } else {
+                    this.setDefaultBody();
+                }
+            },
+            setBlinkBody: function() {
+                _.extend(
+                    this._animations,
+                    {
+                        stop: new Animation([
+                            _frames[this.bodyType][0],
+                            _framesBlink[this.bodyType][0]
+                        ], 150),
+                        move: new Animation([
+                            _frames[this.bodyType][0],
+                            _frames[this.bodyType][1],
+                            _framesBlink[this.bodyType][0],
+                            _framesBlink[this.bodyType][1]
+                        ], 75)
+                    }
+                );
+                this.blink = true;
+            },
+            setDefaultBody: function() {
+                _.extend(
+                    this._animations,
+                    {
+                        stop: new Animation([
+                            _frames[this.bodyType][0]
+                        ], 999),
+                        move: new Animation([
+                            _frames[this.bodyType][0],
+                            _frames[this.bodyType][1]
+                        ], 75)
+                    }
+                );  
+                this.blink = false;
+            },
+            getBlink: function() {
+                return this.blink;
+            },
             isCanDestroy: function(tailType) {
                 return _.contains(this.canDestroy, tailType);
             },
@@ -88,20 +154,7 @@ var Tank = function(modelName) {
             },
             setBodyType: function(level) {
                 this.bodyType = level;
-                
-                _.extend(
-                    this._animations, 
-                    {
-                        stop: new Animation([ 
-                            _frames[this.bodyType][0]
-                        ], 999),
-
-                        move: new Animation([ 
-                            _frames[this.bodyType][0], 
-                            _frames[this.bodyType][1] 
-                        ], 75)
-                    }
-                );
+                this.setBlink(this.blink);
             },
             improveBodyType: function() {
                 this.setBodyType(++this.bodyType);
@@ -396,12 +449,6 @@ var Tank = function(modelName) {
                 BattleCity.addModel(this.holder[this.holder.length - 1]);
                 return this.holder[this.holderSize++];
             },
-//            decreaseHolder: function() {
-//                BattleCity.removeModel(this.holder.pop());
-//                if (this.holderSize > 0) {
-//                    this.holderSize--;
-//                }
-//            },
             getState: function() {
                 return this.curentState;
             },
@@ -442,8 +489,6 @@ var Tank = function(modelName) {
                 return this.dirrection;
             },
             setDirrection: function(dirrection) {
-//                this.justifyCoordsToMap();
-                
                 this.dirrection = dirrection;
                 return this;
             },
@@ -473,7 +518,8 @@ var Tank = function(modelName) {
                         Game.types.tankStates.move,
                         Game.types.tankStates.freezed
                     ], this.curentState) && 
-                    this.powerUpExists(Game.types.powerUps.protectiveField.id) === -1);
+                    this.powerUpExists(Game.types.powerUps.protectiveField.id) === -1
+                );
             },
             moveForward: function() {
                 if (this.canMove()) {
@@ -585,12 +631,20 @@ var Tank = function(modelName) {
                 // Default body type
                 this.setBodyType(0);
                 
+                // Set blinking
+                this.setBlink(this.blink);
+                
                 // Model speed init
                 this.setSpeed(model.speed);
             },
             shellHit: function() {
                 if (this.canDie()) {
                     this.die();
+                }
+                
+                // If blink flat set then power up thorows
+                if (this.blink) {
+                    BattleCity.throwPowerUp();
                 }
             },
             die: function() {

@@ -255,8 +255,6 @@ var Tank = function(modelName) {
                         );
                     break;
                 }
-                
-                BattleCity.throwPowerUp();
             },
             updatePowerUp: function(id, data) {
                 return _.extend(_.find(this.powerUps, { id: id }), data);

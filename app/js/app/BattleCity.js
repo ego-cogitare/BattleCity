@@ -46,7 +46,7 @@ window.onload = function() {
             },
             initialize: function() {
                 GameLoop.renderer = new PIXI.autoDetectRenderer(GameLoop.screenSizes().width, GameLoop.screenSizes().height);
-                document.body.appendChild(GameLoop.renderer.view);
+                document.getElementById('GAME').appendChild(GameLoop.renderer.view);
                 GameLoop.stage = new PIXI.Container();
                 requestAnimationFrame(GameLoop.animate);
                 
@@ -80,10 +80,14 @@ window.onload = function() {
                 _prevUnixTime = _curUnixTime;
                 
                 /* Render main game screen */
-                _.each(BattleCity.getChildrenByType(['tank','shell','powerUp']), function(model) { 
-                    try { model.render(); } catch (e) {}
-                    try { model.AIPlay(); } catch (e) {}
-                });
+                switch (GameScreen.getGameScreen()) {
+                    case 'GAME':
+                        _.each(BattleCity.getChildrenByType(['tank','shell','powerUp']), function(model) {
+                            model.render();
+                            try { model.AIPlay(); } catch (e) {}
+                        });
+                    break;
+                }
             },
             gameOver: function() {
                 BattleCity.map.killCrest();
@@ -208,6 +212,9 @@ window.onload = function() {
     /* After all resources are loaded */
     Loader.once('complete', 
         function() {
+            
+            /* Show default game screen */
+            GameScreen.init();
 
             /* Gameloop initialization */
             BattleCity.initialize();

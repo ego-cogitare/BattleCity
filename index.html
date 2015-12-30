@@ -20,10 +20,24 @@
         <script type="text/javascript" src="app/js/app/Map.js" defer></script>
         <script type="text/javascript" src="app/js/app/AI.js" defer></script>
         <script type="text/javascript" src="app/js/app/SwipeDetect.js" defer></script>
+        <script type="text/javascript" src="app/js/app/GameScreen.js" defer></script>
         <script type="text/javascript" src="app/js/app/BattleCity.js" defer></script>
         <!-- endinject -->
     </head>
     <body id="body">
-        <div id="frameRate"></div>
+        <div id="frameRate">
+        </div>
+        <div class="game-screen" id="GAME">
+        </div>
+        <div class="game-screen" id="MAIN_MENU">
+            <ul>
+                <li ontouchend="GameScreen.setGameScreen('GAME')" onclick="GameScreen.setGameScreen('GAME')">Story</li>
+                <li>Death match</li>
+                <li onclick="GameScreen.setGameScreen('HIGH_SCORES')">High scores</li>
+            </ul>
+        </div>
+        <div class="game-screen" id="HIGH_SCORES">
+            High score: 0
+        </div>
     </body>
 </html>

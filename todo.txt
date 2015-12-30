@@ -20,6 +20,7 @@ x    6. PDA devices input handling
      x   1. Tank changes direction on swipe
      x   2. Taping on screen should rotate tank on taping point or make a shot if tank already rotated to taping point
      x   3. Longtapping should move tank to tap point position and automatically stop the tank if it reached that point
+x    7. Game screens implementation
 
 Shell
 !   1. Explosion point animation fix

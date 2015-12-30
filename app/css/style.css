@@ -3,3 +3,21 @@ body {
     padding: 0;
     background-color: #FFF;
 }
+
+body .game-screen {
+    display: none;
+    background: #CCC;
+    width: 830px;
+    height: 830px;
+    position: absolute;
+}
+
+body .game-screen UL {
+    list-style-type: none;
+}
+
+body .game-screen UL LI {
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+}

@@ -1,1 +1,1 @@
-body{margin:0;padding:0;background-color:#FFF}
+body{margin:0;padding:0;background-color:#FFF;position:relative;overflow:hidden}body .game-screen{display:none;background:#CCC;width:100%;height:100%;top:0;left:0;right:0;bottom:0;position:absolute}body .game-screen canvas{width:auto;height:100%}body .game-screen UL{list-style-type:none}body .game-screen UL LI{width:100%;text-align:center;cursor:pointer}

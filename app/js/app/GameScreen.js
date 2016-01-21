@@ -9,6 +9,8 @@ var GameScreen = {
         'LEVEL_SELECT'
     ],
     init: function() {
+        document.body.style.width = screen.availWidth + 'px';
+        document.body.style.height = screen.availHeight + 'px';
         this.show(this.gameScreen);
     },
     show: function(gameScreen) {

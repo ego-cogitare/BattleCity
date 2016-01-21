@@ -53,7 +53,10 @@ window.onload = function() {
                 /* Frame rate counter */
                 GameLoop.frameRate = 0;
                 setInterval(function() { 
-                    document.getElementById('frameRate').innerHTML = 'FPS: ' + GameLoop.frameRate + ' OBJECTS: ' + GameLoop.getChildren().length;
+                    document.getElementsByTagName('canvas')[0].style.marginLeft =
+                        ((screen.availWidth - document.getElementsByTagName('canvas')[0].scrollWidth) / 2) + 'px';
+                
+                    document.getElementById('frameRate').innerHTML = 'FPS: ' + GameLoop.frameRate + '<br/>OBJECTS: ' + GameLoop.getChildren().length;
                     GameLoop.frameRate = 0; 
                 }, 1000);
                 

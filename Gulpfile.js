@@ -66,7 +66,7 @@ gulp.task('cssInjectBuild', function () {
 
 // CSS uglify
 gulp.task('cssUglify', function () {
-    return gulp.src('app/css/**/*')
+    return gulp.src(['app/css/**/*', 'app/vendors/bootstrap/dist/css/bootstrap.min.css', 'app/vendors/bootstrap/dist/css/bootstrap-theme.min.css'])
         .pipe(minifycss().on('error', handleError))
         .pipe(concat('style.min.css'))
         .pipe(gulp.dest('build'));
@@ -74,7 +74,7 @@ gulp.task('cssUglify', function () {
 
 // JavaScript uglify
 gulp.task('jsUglify', function () {
-    return gulp.src(['app/js/vendors/pixi/bin/pixi.js','app/js/vendors/underscore/underscore-min.js','app/js/app/**/*'])
+    return gulp.src(['app/vendors/pixi/bin/pixi.js','app/vendors/underscore/underscore-min.js','app/js/app/**/*'])
         .pipe(uglify().on('error', handleError))
         .pipe(concat('battlecity.min.js'))
         .pipe(gulp.dest('build'));

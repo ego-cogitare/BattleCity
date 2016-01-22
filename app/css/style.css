@@ -1,3 +1,8 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -18,22 +23,27 @@ body .game-screen {
     position: absolute;
 }
 
-body .game-screen canvas {
+body #GAME canvas {
     width: auto;
     height: 100%;
 }
 
-body .game-screen UL {
-    list-style-type: none;
+body #MAIN_MENU {
+    padding-top: 20px;
 }
 
-body .game-screen UL LI {
-    width: 100%;
-    text-align: center;
+body #MAIN_MENU DIV.menu-item {
+    width: 40%;
+    margin: 7px auto;
     cursor: pointer;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    display: block;
 }
 
-body #frameRate {
+body #GAME #frameRate {
     position: absolute;
     z-index: 999;
+    right: 0;
+    text-align: right;
 }

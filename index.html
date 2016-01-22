@@ -6,11 +6,13 @@
         
         <!-- inject:css -->
         <link href="app/css/style.css" rel="stylesheet" type="text/css"/>
+        <link href="app/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="app/vendors/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css"/>
         <!-- endinject -->
         
         <!-- inject:js -->
-        <script type="text/javascript" src="app/js/vendors/pixi/bin/pixi.js" defer></script>
-        <script type="text/javascript" src="app/js/vendors/underscore/underscore-min.js" defer></script>
+        <script type="text/javascript" src="app/vendors/pixi/bin/pixi.js" defer></script>
+        <script type="text/javascript" src="app/vendors/underscore/underscore-min.js" defer></script>
         <script type="text/javascript" src="app/js/app/Utils.js" defer></script>
         <script type="text/javascript" src="app/js/app/Keyboard.js" defer></script>
         <script type="text/javascript" src="app/js/app/Config.js" defer></script>
@@ -27,16 +29,15 @@
         <!-- endinject -->
     </head>
     <body id="body">
-        <div id="frameRate">
+        <div class="game-screen" id="MAIN_MENU">
+            <div class="menu-item btn btn-success btn-lg" ontouchstart="GameScreen.setGameScreen('GAME')" onclick="GameScreen.setGameScreen('GAME')">Story</div>
+            <div class="menu-item btn btn-success btn-lg" ontouchstart="GameScreen.setGameScreen('DEATH_MATCH')" onclick="GameScreen.setGameScreen('DEATH_MATCH')">Death match</div>
+            <div class="menu-item btn btn-success btn-lg" ontouchstart="GameScreen.setGameScreen('HIGH_SCORES')" onclick="GameScreen.setGameScreen('HIGH_SCORES')">High scores</div>
         </div>
         <div class="game-screen" id="GAME">
+            <div id="frameRate"></div>
         </div>
-        <div class="game-screen" id="MAIN_MENU">
-            <ul>
-                <li ontouchend="GameScreen.setGameScreen('GAME')" onclick="GameScreen.setGameScreen('GAME')">Story</li>
-                <li>Death match</li>
-                <li onclick="GameScreen.setGameScreen('HIGH_SCORES')">High scores</li>
-            </ul>
+        <div class="game-screen" id="DEATH_MATCH">
         </div>
         <div class="game-screen" id="HIGH_SCORES">
             High score: 0

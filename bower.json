@@ -3,6 +3,7 @@
 	"version": "0.0.1",
 	"dependencies": {
 		"pixi": "latest",
-		"underscore": "1.8.3"
+		"underscore": "1.8.3",
+                "bootstrap": "latest"
 	}
 }

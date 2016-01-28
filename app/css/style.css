@@ -47,3 +47,10 @@ body #GAME #frameRate {
     right: 0;
     text-align: right;
 }
+
+body #GAME #BACK {
+    top: auto;
+    bottom: 5px;
+    position: absolute;
+    right: 5px;
+}

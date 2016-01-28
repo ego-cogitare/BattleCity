@@ -6,8 +6,8 @@ var SwipeDetect = function() {
             startY,
             distX,
             distY,
-            threshold = 100,
-            allowedTime = 200,
+            threshold = 50,
+            allowedTime = 100,
             elapsedTime,
             startTime = -1,
             eventsQueue = [];

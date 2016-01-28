@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>Battle City</title>
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <meta name="viewport" content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width,height=device-height,target-densitydpi=device-dpi" />
         
         <!-- inject:css -->
         <link href="app/css/style.css" rel="stylesheet" type="text/css"/>
@@ -30,12 +30,24 @@
     </head>
     <body id="body">
         <div class="game-screen" id="MAIN_MENU">
-            <div class="menu-item btn btn-success btn-lg" ontouchstart="GameScreen.setGameScreen('GAME')" onclick="GameScreen.setGameScreen('GAME')">Story</div>
-            <div class="menu-item btn btn-success btn-lg" ontouchstart="GameScreen.setGameScreen('DEATH_MATCH')" onclick="GameScreen.setGameScreen('DEATH_MATCH')">Death match</div>
-            <div class="menu-item btn btn-success btn-lg" ontouchstart="GameScreen.setGameScreen('HIGH_SCORES')" onclick="GameScreen.setGameScreen('HIGH_SCORES')">High scores</div>
+            <div class="menu-item btn btn-primary btn-lg" 
+                 ontouchstart="GameScreen.setGameScreen('GAME')" 
+                 onclick="GameScreen.setGameScreen('GAME')">Story</div>
+            
+            <div class="menu-item btn btn-primary btn-lg" 
+                 ontouchstart="GameScreen.setGameScreen('DEATH_MATCH')" 
+                 onclick="GameScreen.setGameScreen('DEATH_MATCH')">Death match</div>
+            
+            <div class="menu-item btn btn-primary btn-lg" 
+                 ontouchstart="GameScreen.setGameScreen('HIGH_SCORES')" 
+                 onclick="GameScreen.setGameScreen('HIGH_SCORES')">High scores</div>
         </div>
         <div class="game-screen" id="GAME">
             <div id="frameRate"></div>
+            <div id="BACK" 
+                 class="btn btn-primary glyphicon glyphicon-arrow-left" 
+                 onclick="GameScreen.setGameScreen('MAIN_MENU')"
+                 ontouchstart="GameScreen.setGameScreen('MAIN_MENU')"></div>
         </div>
         <div class="game-screen" id="DEATH_MATCH">
         </div>

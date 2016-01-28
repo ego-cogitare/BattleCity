@@ -23,7 +23,10 @@ gulp.task('copy', function () {
         .pipe(gulp.dest('build')),
 
     gulp.src('app/asset/**/*')
-        .pipe(gulp.dest('build/app/asset'))
+        .pipe(gulp.dest('build/app/asset')),
+
+    gulp.src('app/vendors/bootstrap/dist/fonts/**/*')
+        .pipe(gulp.dest('build/app/asset/fonts'))
   );
 });
 
@@ -58,7 +61,7 @@ gulp.task('jsInjectBuild', function () {
 
 gulp.task('cssInjectBuild', function () {
     var target = gulp.src('build/index.html');
-    var sources = gulp.src('build/style.min.css', { read: false });
+    var sources = gulp.src('build/app/asset/css/style.min.css', { read: false });
 
     return target.pipe(inject(sources, { relative: true }))
         .pipe(gulp.dest('build'));
@@ -69,7 +72,7 @@ gulp.task('cssUglify', function () {
     return gulp.src(['app/css/**/*', 'app/vendors/bootstrap/dist/css/bootstrap.min.css', 'app/vendors/bootstrap/dist/css/bootstrap-theme.min.css'])
         .pipe(minifycss().on('error', handleError))
         .pipe(concat('style.min.css'))
-        .pipe(gulp.dest('build'));
+        .pipe(gulp.dest('build/app/asset/css'));
 });
 
 // JavaScript uglify
@@ -81,11 +84,11 @@ gulp.task('jsUglify', function () {
 });
 
 // JavaScript concat
-gulp.task('jsConcat', function () {
-    return gulp.src(['build/app/js/app/**/*'])
-        .pipe(concat('battlecity.min.js'))
-        .pipe(gulp.dest('build/app/js/app'));
-});
+//gulp.task('jsConcat', function () {
+//    return gulp.src(['build/app/js/app/**/*'])
+//        .pipe(concat('battlecity.min.js'))
+//        .pipe(gulp.dest('build/app/js/app'));
+//});
 
 /* ANDROID */
 gulp.task('copyMobile', function() {

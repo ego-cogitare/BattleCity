@@ -17,7 +17,7 @@ Game = {
             {
                 name: 'player1',
                 isHuman: true,
-                holderSize: 2,
+                holderSize: 1,
                 cooldownTime: 100,
                 scale: 1,
                 speed: 4.0,
@@ -31,7 +31,7 @@ Game = {
             {
                 name: 'player2',
                 isHuman: true,
-                holderSize: 2,
+                holderSize: 1,
                 cooldownTime: 100,
                 scale: 1,
                 speed: 3.0,
@@ -39,7 +39,7 @@ Game = {
                 canNotDestroy: [
                     6
                 ],
-                initX: 532,
+                initX: 468,
                 initY: 800
             },
             {

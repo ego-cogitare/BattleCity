@@ -86,7 +86,7 @@ window.onload = function() {
                 switch (GameScreen.getGameScreen()) {
                     case 'GAME':
                         _.each(BattleCity.getChildrenByType(['tank','shell','powerUp']), function(model) {
-                            model.render();
+                            try { model.render(); } catch (e) {}
                             try { model.AIPlay(); } catch (e) {}
                         });
                     break;
@@ -133,6 +133,9 @@ window.onload = function() {
                 return _.sample(_.where(Game.types.powerUps, { applyable: true })).id;
             },
             throwPowerUp: function(powerUpType) {
+                if (BattleCity.getChildrenByType(['powerUp']).length > 0) {
+                    return;
+                }
                 var mapSize = BattleCity.map.getMapSize();
                 if (typeof powerUpType === 'undefined') {
                     powerUpType = GameLoop.getRandomPowerUp();
@@ -142,6 +145,11 @@ window.onload = function() {
                     (_.random(mapSize.height - 2) + 1) * _tailHeight
                 );
                 this.addModel(powerUp);
+            },
+            removePowerUps: function() {
+                _.each(BattleCity.getChildrenByType(['powerUp']), function(powerUp) {
+                    this.removeModel(powerUp);
+                }, this);
             },
             getTanksByModelName: function(modelName) {
                 var tanks = [];
@@ -196,6 +204,7 @@ window.onload = function() {
             removeModel: GameLoop.removeModel,
             zIndexReorder: GameLoop.zIndexReorder,
             throwPowerUp: GameLoop.throwPowerUp,
+            removePowerUps: GameLoop.removePowerUps,
             addBot: GameLoop.addBot
         };
     });
@@ -318,7 +327,7 @@ window.onload = function() {
                     x++;
                     var bot = BattleCity.addBot(modelName);
                     bot.setXY(x * 64 + 32, i * 128 + 32);
-                    bot.setBlink(true);
+                    bot.setBlink(Math.random() > 0.7);
                 });
             }
         }

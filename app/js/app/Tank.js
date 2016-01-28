@@ -642,6 +642,10 @@ var Tank = function(modelName) {
                 
                 // If blink flat set then power up thorows
                 if (this.blink) {
+                    // Clear all power ups on game field
+                    BattleCity.removePowerUps();
+                    
+                    // Throw new one
                     BattleCity.throwPowerUp();
                 }
             },

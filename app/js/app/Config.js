@@ -224,13 +224,28 @@ Game = {
         }
     },
     config: {
-        assets: {
-            Atlas: 'app/asset/textures/atlas4x.png',
-            maps: [
-                'app/asset/maps/level01.json',
-                'app/asset/maps/level01.json'
-            ]
-        },
+        assets: [
+            {
+                src: 'app/asset/textures/atlas4x.png',
+                type: 'gfx',
+                name: 'Atlas'
+            },
+            {
+                src: 'app/asset/maps/level01.json',
+                type: 'map',
+                name: 'level01'
+            },
+            {
+                src: 'app/asset/maps/level01.json',
+                type: 'map',
+                name: 'level02'
+            },
+            {
+                src: 'app/asset/sfx/sfx01.mp3',
+                type: 'sfx',
+                name: 'bg01'
+            }
+        ],
         tailSize: {
             width: 32,
             height: 32

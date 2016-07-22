@@ -7,7 +7,7 @@ window.onload = function() {
         var _timeDelta = 0;
         
         var GameLoop = {
-            currentLevel: 0,
+            currentLevel: '01',
             collidableTiles: [
                 Game.types.mapTails.concrete, 
                 Game.types.mapTails.brick, 
@@ -172,14 +172,8 @@ window.onload = function() {
                 return tank;
             },
             addAssets: function() {
-                _.each(Game.config.assets, function (v, f) {
-                    if (typeof Game.config.assets[f] === 'object') {
-                        _.each(v, function (el, i) {
-                            Loader.add('level' + i, el);
-                        });
-                    } else {
-                        Loader.add(f, v);
-                    }
+                _.each(Game.config.assets, function (r) {
+                    Loader.add(r.name, r.src);
                 });
             }
         };
@@ -233,6 +227,10 @@ window.onload = function() {
             
             /* Create game map instance */
             BattleCity.map = new Map();
+            
+            /*  */
+            var awesomeMusic = PIXI.audioManager.getAudio('bg01');
+            awesomeMusic.play();
             
             /* Load game map */
             BattleCity.map.load(BattleCity.currentLevel);

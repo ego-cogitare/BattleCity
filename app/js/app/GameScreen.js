@@ -1,13 +1,13 @@
 var GameScreen = {
     gameScreen: 'MAIN_MENU',
-    gameScreens: [
-        'MAIN_MENU',
-        'HIGH_SCORES',
-        'PAUSE',
-        'GAME',
-        'GAME_OVER',
-        'LEVEL_SELECT'
-    ],
+    gameScreens: {
+        MAIN_MENU: 'MAIN_MENU',
+        HIGH_SCORES: 'HIGH_SCORES',
+        PAUSE: 'PAUSE',
+        GAME: 'GAME',
+        GAME_OVER: 'GAME_OVER',
+        LEVEL_SELECT: 'LEVEL_SELECT'
+    },
     init: function() {
         document.body.style.width = Math.max(screen.availWidth, screen.availHeight)  + 'px';
         document.body.style.height = Math.min(screen.availWidth, screen.availHeight) + 'px';

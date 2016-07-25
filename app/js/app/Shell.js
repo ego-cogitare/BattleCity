@@ -242,6 +242,14 @@ var Shell = function() {
                         }
                         else if (this.getOwner().isCanDestroy(BattleCity.map.getMapCellAt(point.x, point.y))) {
                             BattleCity.map.replaceCell(point.x, point.y, Game.types.mapTails.empty);
+                            if (this.getOwner().isHuman()) {
+                                PIXI.audioManager.getAudio('brickRemove').play();
+                            }
+                        }
+                        else if (BattleCity.map.getMapCellAt(point.x, point.y) === Game.types.mapTails.concrete) {
+                            if (this.getOwner().isHuman()) {
+                                PIXI.audioManager.getAudio('concrete').play();
+                            }
                         }
                     }, this);
                 }

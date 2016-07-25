@@ -1,96 +1,107 @@
 var Keyboard = function() {
     
-    var _keyFlags = {};
+    var keyboard = {
+        keys: {
+        },
+        onKeyDown: function(keyCode) {
+        },
+        onKeyUp: function(keyCode) {
+        }
+    };
     
     window.addEventListener('keydown', function(event) {
         switch (event.keyCode) {
             case 37: // Left
-                _keyFlags.left = true;
+                keyboard.keys.left = true;
             break;
 
             case 38: // Up
-                _keyFlags.up = true;
+                keyboard.keys.up = true;
             break;
 
             case 39: // Right
-                _keyFlags.right = true;
+                keyboard.keys.right = true;
             break;
 
             case 40: // Down
-                _keyFlags.down = true;
+                keyboard.keys.down = true;
             break;
             
             case 90: // Shot
-                _keyFlags.z = true;
+                keyboard.keys.z = true;
             break;
 
             case 100: // Left
-                _keyFlags.num4 = true;
+                keyboard.keys.num4 = true;
             break;
 
             case 104: // Up
-                _keyFlags.num8 = true;
+                keyboard.keys.num8 = true;
             break;
 
             case 102: // Right
-                _keyFlags.num6 = true;
+                keyboard.keys.num6 = true;
             break;
 
             case 101: // Down
-                _keyFlags.num5 = true;
+                keyboard.keys.num5 = true;
             break;
             
             case 105: // Shot
-                _keyFlags.num9 = true;
+                keyboard.keys.num9 = true;
             break;
         }
+        
+        keyboard.onKeyDown.call(this, event.keyCode);
+        
     }, false);
     
     window.addEventListener('keyup', function(event) {
         switch (event.keyCode) {
             case 37: // Left
-                _keyFlags.left = false;
+                keyboard.keys.left = false;
             break;
 
             case 38: // Up
-                _keyFlags.up = false;
+                keyboard.keys.up = false;
             break;
 
             case 39: // Right
-                _keyFlags.right = false;
+                keyboard.keys.right = false;
             break;
 
             case 40: // Down
-                _keyFlags.down = false;
+                keyboard.keys.down = false;
             break;
             
             case 90: // Shot
-                _keyFlags.z = false;
+                keyboard.keys.z = false;
             break;
 
             case 100: // Left
-                _keyFlags.num4 = false;
+                keyboard.keys.num4 = false;
             break;
 
             case 104: // Up
-                _keyFlags.num8 = false;
+                keyboard.keys.num8 = false;
             break;
 
             case 102: // Right
-                _keyFlags.num6 = false;
+                keyboard.keys.num6 = false;
             break;
 
             case 101: // Down
-                _keyFlags.num5 = false;
+                keyboard.keys.num5 = false;
             break;
 
             case 105: // Shot
-                _keyFlags.num9 = false;
+                keyboard.keys.num9 = false;
             break;
         }
+        
+        keyboard.onKeyUp.call(this, event.keyCode);
+        
     }, false);
 
-    return {
-        keys: _keyFlags
-    };
+    return keyboard;
 };

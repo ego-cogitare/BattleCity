@@ -241,9 +241,39 @@ Game = {
                 name: 'level02'
             },
             {
-                src: 'app/asset/sfx/sfx01.mp3',
+                src: 'app/asset/sfx/Battle City SFX (10).wav',
                 type: 'sfx',
-                name: 'bg01'
+                name: 'pauseIn'
+            },
+            {
+                src: 'app/asset/sfx/Battle City SFX (13).wav',
+                type: 'sfx',
+                name: 'pauseOut'
+            },
+            {
+                src: 'app/asset/sfx/Battle City SFX (6).wav',
+                type: 'sfx',
+                name: 'shot'
+            },
+            {
+                src: 'app/asset/sfx/Battle City SFX (11).wav',
+                type: 'sfx',
+                name: 'dieHuman'
+            },
+            {
+                src: 'app/asset/sfx/Battle City SFX (7).wav',
+                type: 'sfx',
+                name: 'dieBot'
+            },
+            {
+                src: 'app/asset/sfx/Battle City SFX (5).wav',
+                type: 'sfx',
+                name: 'brickRemove'
+            },
+            {
+                src: 'app/asset/sfx/Battle City SFX (2).wav',
+                type: 'sfx',
+                name: 'concrete'
             }
         ],
         tailSize: {

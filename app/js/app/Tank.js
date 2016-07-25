@@ -435,6 +435,9 @@ var Tank = function(modelName) {
                             this.holder[i].setPosition(this.position.x, this.position.y);
                             this.holder[i].shot();
                             this.lastShootTime = BattleCity.getTime();
+                            if (this.isHuman()) {
+                                PIXI.audioManager.getAudio('shot').play();
+                            }
                         }
                     }
                 }
@@ -654,6 +657,7 @@ var Tank = function(modelName) {
                 this.updateZIndex(5);
                 this.setState(Game.types.tankStates.explosion);
                 this._animations.explosion.reset();
+                PIXI.audioManager.getAudio(this.isHuman() ? 'dieHuman' : 'dieBot').play();
             },
             // Reinitialization tank model depends on model type
             finalize: function() {

@@ -7,6 +7,7 @@ window.onload = function() {
         var _timeDelta = 0;
         
         var GameLoop = {
+            gamePaused: false,
             currentLevel: '01',
             collidableTiles: [
                 Game.types.mapTails.concrete, 
@@ -74,6 +75,13 @@ window.onload = function() {
                     });
                 }, 1000);
             },
+            setPaused: function(pause) {
+                GameLoop.gamePaused = pause;
+                PIXI.audioManager.getAudio(pause ? 'pauseOut' : 'pauseIn').play();
+            },
+            getPaused: function() {
+                return GameLoop.gamePaused;
+            },
             animate: function() {
                 GameLoop.frameRate++;
                 requestAnimationFrame(GameLoop.animate);
@@ -82,10 +90,14 @@ window.onload = function() {
                 _timeDelta = _curUnixTime - _prevUnixTime;
                 _prevUnixTime = _curUnixTime;
                 
+                if (GameLoop.getPaused()) {
+                    return ;
+                }
+                
                 /* Render main game screen */
                 switch (GameScreen.getGameScreen()) {
-                    case 'GAME':
-                        _.each(BattleCity.getChildrenByType(['tank','shell','powerUp']), function(model) {
+                    case GameScreen.gameScreens.GAME:
+                        _.each(BattleCity.getChildrenByType(['tank', 'shell', 'powerUp']), function(model) {
                             try { model.render(); } catch (e) {}
                             try { model.AIPlay(); } catch (e) {}
                         });
@@ -94,6 +106,7 @@ window.onload = function() {
             },
             gameOver: function() {
                 BattleCity.map.killCrest();
+                PIXI.audioManager.getAudio('dieHuman').play();
                 console.log('Game over');
             },
             getTime: function() {
@@ -194,6 +207,8 @@ window.onload = function() {
             getTimeDelta: GameLoop.getTimeDelta,
             input: new Keyboard(),
             map: GameLoop.map,
+            getPaused: GameLoop.getPaused,
+            setPaused: GameLoop.setPaused,
             gameOver: GameLoop.gameOver,
             removeModel: GameLoop.removeModel,
             zIndexReorder: GameLoop.zIndexReorder,
@@ -228,10 +243,6 @@ window.onload = function() {
             /* Create game map instance */
             BattleCity.map = new Map();
             
-            /*  */
-            var awesomeMusic = PIXI.audioManager.getAudio('bg01');
-            awesomeMusic.play();
-            
             /* Load game map */
             BattleCity.map.load(BattleCity.currentLevel);
             
@@ -245,6 +256,13 @@ window.onload = function() {
             /* Add human players to stage */
             BattleCity.addModel(player1);
             BattleCity.addModel(player2);
+            
+            /* Handle pause <Enter> */
+            BattleCity.input.onKeyUp = function(key) {
+                if (key === 13) {
+                    BattleCity.setPaused(!BattleCity.getPaused());
+                }
+            };
             
             /* Player 1 input handling */
             player1.handleInput = function() {
@@ -318,6 +336,7 @@ window.onload = function() {
                     this.shot();
                 }
             };
+            
             
             for (var i = 0; i < 1; i++) {
                 var x = 0;

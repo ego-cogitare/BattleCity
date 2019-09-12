@@ -2,7 +2,7 @@
     "name": "battle-city",
     "version": "0.0.1",
     "dependencies": {
-        "pixi": "latest",
+        "pixi": "3.0.1",
         "pixi-audio": "https://github.com/Nazariglez/pixi-audio.git",
         "underscore": "1.8.3",
         "bootstrap": "latest"

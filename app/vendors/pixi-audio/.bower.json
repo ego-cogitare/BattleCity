@@ -1,0 +1,13 @@
+{
+  "name": "pixi-audio",
+  "homepage": "https://github.com/Nazariglez/pixi-audio",
+  "_release": "7f6c42a303",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "7f6c42a303b15f29246c89b3d3984529b742e02f"
+  },
+  "_source": "https://github.com/Nazariglez/pixi-audio.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/Nazariglez/pixi-audio.git"
+}
